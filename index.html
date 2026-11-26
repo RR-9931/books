@@ -510,6 +510,7 @@ function setSync(state) {
     slow: ['warn', '同步服务暂时连不上，先显示本机记录'],
     offline: ['warn', '离线中，进度会在联网后同步'],
     local: ['warn', '还没登入'],
+    nosql: ['err', '云端还没建好资料表：去 Supabase 跑 setup.sql'],
     err: ['err', '同步出错，重新打开页面再试']
   };
   const [cls, txt] = map[state] || map.connecting;
@@ -888,13 +889,22 @@ async function exportAll() {
 async function importAll() {
   if (!S.db) { busy('先登入再导入', 2000); return; }
   const f = await pickFile(); if (!f) return;
+  let data;
   try {
-    busy('正在导入…');
-    const data = JSON.parse(await f.text());
-    if (!data || data.app !== '书斋' || !Array.isArray(data.docs)) throw new Error('bad');
-    const now = Date.now(); let books = 0, waiting = 0;
+    const txt = (await f.text()).replace(/^﻿/, '').trim();
+    data = JSON.parse(txt);
+    if (Array.isArray(data)) data = { docs: data };
+    if (!data || !Array.isArray(data.docs)) throw new Error('shape');
+  } catch (e) {
+    await modal('读不到这个文件', '《' + f.name + '》不是书斋的备份文件。要选 Google Drive「Wei Hang Apps 备份 / 书斋」里面名字像「书斋备份-2026-11-26.json」的文件，不是「说明」那个。', [{ label: '知道了', v: 1 }]);
+    return;
+  }
+  const now = Date.now(); let books = 0, waiting = 0, done = 0;
+  const total = data.docs.filter(d => d && d.id && d.data).length;
+  try {
     for (const d of data.docs) {
       if (!d || !d.id || !d.data) continue;
+      busy('正在导入 ' + (++done) + '/' + total + '…');
       const v = Object.assign({}, d.data);
       if (d.id.startsWith('book_')) {
         books++;
@@ -906,9 +916,18 @@ async function importAll() {
       if (d.id.startsWith('set_')) v.at = now;
       await S.db.doc('data/users/' + S.uid + '/' + d.id).set(v);
     }
+  } catch (e) {
     busy(null);
-    await modal('导入完成', '导入了 ' + books + ' 本书的书架资料、进度和划线。' + (waiting ? '其中 ' + waiting + ' 本还要上传书本文件：直接按「添加书籍」选同一个文件就行，书名一样的会自动接回进度和划线。' : ''), [{ label: '知道了', v: 1 }]);
-  } catch (e) { busy('这个文件不是书斋备份', 3000); }
+    const t = String((e && e.message) || e || '');
+    const hint = /relation|does not exist|schema cache|not find the table/i.test(t) ? '云端还没建好资料表：去 Supabase 的 SQL Editor 把 setup.sql 整段贴上按 Run，再导入一次。'
+      : /row-level security|permission|policy|42501/i.test(t) ? '云端的权限规则没设好：去 Supabase 的 SQL Editor 再跑一次 setup.sql。'
+      : /fetch|network|Failed/i.test(t) ? '网络断了，连上之后再导入一次。'
+      : '云端存不进去。';
+    await modal('导入到一半停了', '已经导入 ' + (done - 1) + '/' + total + ' 项。' + hint + '\n\n（错误：' + t.slice(0, 160) + '）', [{ label: '知道了', v: 1 }]);
+    return;
+  }
+  busy(null);
+  await modal('导入完成', '导入了 ' + books + ' 本书的书架资料、进度和划线。' + (waiting ? '其中 ' + waiting + ' 本还要上传书本文件：直接按「添加书籍」选同一个文件就行，书名一样的会自动接回进度和划线。' : ''), [{ label: '知道了', v: 1 }]);
 }
 
 /* ---------------- book recommendations ---------------- */
@@ -1351,7 +1370,7 @@ function makeDb(uid) {
     }
     if (!loaded || changed) { loaded = true; emit(); }
   }
-  const repull = () => pulling || (pulling = pull().catch(e => { dbg('pull failed ' + (e && e.message)); if (!loaded) setSync(navigator.onLine ? 'slow' : 'offline'); }).finally(() => { pulling = null; }));
+  const repull = () => pulling || (pulling = pull().catch(e => { dbg('pull failed ' + (e && e.message)); if (!loaded) setSync(/relation|does not exist|schema cache|not find the table/i.test(String(e && e.message)) ? 'nosql' : navigator.onLine ? 'slow' : 'offline'); }).finally(() => { pulling = null; }));
   const onRow = p => {
     if (p.eventType === 'DELETE') { const o = p.old || {}; if (o.id && (!o.user_id || o.user_id === uid) && cache.has(o.id)) { cache.delete(o.id); ver.delete(o.id); emit(); } return; }
     const n = p.new; if (!n || !n.id || n.user_id !== uid) return;
