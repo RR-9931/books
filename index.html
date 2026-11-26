@@ -1,0 +1,2108 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>书斋</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#eaeeec">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="书斋">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.50.5/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=LXGW+WenKai+TC&family=Literata:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eaeeec; --surface:#f7f9f8; --ink:#1c2523; --muted:#63706b; --line:#cfd8d4;
+  --accent:#356f62; --accent-ink:#ffffff; --danger:#9c4236; --shadow:0 1px 2px rgba(20,30,28,.12),0 6px 18px rgba(20,30,28,.08);
+  --ui:system-ui,-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --serif:"Noto Serif SC","Songti SC",STSong,serif;
+  color-scheme:light dark;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121817; --surface:#1a2120; --ink:#dde5e2; --muted:#93a19c; --line:#2c3735;
+    --accent:#7fc0ae; --accent-ink:#0e1615; --danger:#e08a7d; --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.3);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121817; --surface:#1a2120; --ink:#dde5e2; --muted:#93a19c; --line:#2c3735;
+  --accent:#7fc0ae; --accent-ink:#0e1615; --danger:#e08a7d; --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.3);
+  color-scheme:dark;
+}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--ui);-webkit-text-size-adjust:100%}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+:root[data-theme="light"] body{color-scheme:light}
+
+/* ---------- Library ---------- */
+.lib{max-width:1040px;margin:0 auto;padding:28px clamp(16px,4vw,40px) 64px}
+.lib-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px}
+.lib-head h1{font-family:var(--serif);font-weight:700;font-size:44px;line-height:1;margin:0;letter-spacing:.06em}
+.sync{font-size:13px;color:var(--muted);margin-top:10px;display:flex;align-items:center;gap:6px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex:none}
+.dot.ok{background:var(--accent)} .dot.warn{background:#c2902d} .dot.err{background:var(--danger)}
+.head-actions{display:flex;gap:8px;align-items:center;flex:none}
+.head-actions .btn{white-space:nowrap}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:9px 16px;font-size:15px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.btn.icon{padding:9px 13px}
+.btn.danger{color:var(--danger)}
+.resume{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:26px}
+.resume .mini{width:34px;height:46px;border-radius:3px;flex:none;background:var(--c)}
+.resume b{font-family:var(--serif);font-size:17px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.resume small{color:var(--muted);font-size:13px}
+.resume .go{margin-left:auto;color:var(--accent);font-weight:600;white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:26px 18px}
+.card{position:relative;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card-open{all:unset;cursor:pointer;display:block;border-radius:4px}
+.card-open:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.cover{position:relative;aspect-ratio:3/4;background:var(--c);border-radius:3px 5px 5px 3px;box-shadow:var(--shadow);overflow:hidden}
+.cover::before{content:"";position:absolute;left:9%;top:0;bottom:0;border-left:1px solid rgba(255,255,255,.18)}
+.cover .label{position:absolute;right:12%;top:9%;width:30%;max-height:72%;background:#f4f1e8;color:#2a2622;
+  writing-mode:vertical-rl;text-orientation:mixed;font-family:var(--serif);font-weight:600;font-size:14px;line-height:1.15;
+  padding:8px 4px;overflow:hidden;letter-spacing:.08em;border:1px solid rgba(0,0,0,.08)}
+.cover img.cimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cover.has-img::before{display:none}
+.cover.has-img .fmt,.cover.has-img .saved{text-shadow:0 1px 3px rgba(0,0,0,.8);color:#fff}
+.resume .mini img{width:100%;height:100%;object-fit:cover;border-radius:3px;display:block}
+.cover .fmt{position:absolute;left:16%;bottom:7%;font-size:10px;color:rgba(255,255,255,.75);letter-spacing:.05em}
+.cover .saved{position:absolute;left:16%;top:7%;font-size:10px;color:rgba(255,255,255,.75)}
+.card .t{font-size:14px;line-height:1.35;font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card .meta{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.bar{height:3px;border-radius:2px;background:var(--line);overflow:hidden;flex:1}
+.bar i{display:block;height:100%;background:var(--accent)}
+.card .more{position:absolute;top:4px;right:4px;width:30px;height:30px;border-radius:50%;border:0;background:rgba(0,0,0,.28);color:#fff;font-size:15px;line-height:1}
+.empty{border:1.5px dashed var(--line);border-radius:16px;padding:44px 24px;text-align:center;color:var(--muted)}
+.empty p{max-width:30em;margin:0 auto 18px;line-height:1.7}
+.recs{display:flex;flex-direction:column;gap:10px;max-height:58vh;overflow-y:auto;margin:4px 0}
+.rec{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--bg)}
+.rec b{font-family:var(--serif);font-size:17px;display:block}
+.rec .m2{font-size:12px;color:var(--muted);margin:3px 0 6px}
+.modal .rec p{margin:0 0 10px;font-size:14px;line-height:1.65;color:var(--ink)}
+.rec .cp{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 14px;font-size:13px}
+.rec .cp.done{color:var(--accent);border-color:var(--accent)}
+.rec-status{color:var(--muted);font-size:14px;line-height:1.7;padding:6px 0}
+.chips{display:flex;gap:8px;overflow-x:auto;margin:0 0 18px;padding-bottom:2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:14px;display:flex;align-items:center;gap:6px}
+.chip small{color:var(--muted);font-size:12px}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.chip.on small{color:var(--accent-ink);opacity:.8}
+.chip.add{color:var(--muted);border-style:dashed}
+.sec-h{font-family:var(--ui);font-size:14px;font-weight:600;color:var(--muted);margin:34px 0 14px;letter-spacing:.06em}
+#grid>.sec-h:first-child{margin-top:4px}
+.sec-empty{color:var(--muted);font-size:14px;line-height:1.7}
+.card.st-dropped .cover,.card.st-done .cover{opacity:.72}
+.cover .tick{position:absolute;top:6px;left:6px;width:26px;height:26px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.28);color:transparent;display:grid;place-items:center;font-size:14px;font-weight:700}
+.card.sel .tick{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.card.sel .cover{outline:3px solid var(--accent);outline-offset:2px;opacity:1}
+.selbar{position:fixed;left:8px;right:8px;margin:0 auto;width:fit-content;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:40;background:var(--ink);color:var(--bg);border-radius:16px;padding:6px;display:flex;align-items:center;gap:2px;box-shadow:var(--shadow);max-width:calc(100vw - 16px);overflow-x:auto}
+.selbar span{padding:0 10px;font-size:14px;white-space:nowrap}
+.selbar button{background:none;border:0;color:inherit;padding:9px 10px;border-radius:10px;font-size:14px;white-space:nowrap}
+.selbar button.danger{color:#ff9b8f}
+.selbar button:disabled{opacity:.35}
+body.selecting .lib{padding-bottom:130px}
+.pick{max-height:52vh;overflow-y:auto;margin:4px 0;border:1px solid var(--line);border-radius:12px}
+.pick label{display:flex;align-items:center;gap:12px;padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer}
+.pick label:last-child{border-bottom:0}
+.pick input{width:20px;height:20px;accent-color:var(--accent);flex:none}
+.pick .pm{width:30px;height:40px;border-radius:3px;background:var(--c);flex:none;overflow:hidden}
+.pick .pm img{width:100%;height:100%;object-fit:cover;display:block}
+.pick .pt{flex:1;min-width:0}
+.pick .pt b{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pick .pt small{color:var(--muted);font-size:12px}
+.btn:disabled{opacity:.45}
+.auth{position:fixed;inset:0;z-index:95;background:var(--bg);display:grid;place-items:center;padding:24px 16px;overflow-y:auto}
+.auth-card{width:min(400px,100%);background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px 22px;box-shadow:var(--shadow);animation:popIn .4s var(--ease) both}
+.auth h1{font-family:var(--serif);font-size:40px;letter-spacing:.06em;margin:0 0 8px}
+.auth-sub{color:var(--muted);font-size:14px;line-height:1.7;margin:0 0 18px}
+.auth form{display:flex;flex-direction:column;gap:12px}
+.auth label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}
+.auth input{font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px}
+.auth #cfgFields,.auth #loginFields{display:flex;flex-direction:column;gap:12px}
+.auth #cfgFields[hidden],.auth #loginFields[hidden]{display:none}
+.auth .btn{width:100%;border-radius:12px;padding:12px}
+.auth-msg{min-height:1.4em;margin:0;font-size:13px;color:var(--danger);line-height:1.5}
+.auth-msg.ok{color:var(--accent)}
+.foot{margin-top:40px;font-size:12px;color:var(--muted);line-height:1.7}
+
+/* ---------- Modal / busy ---------- */
+.scrim{position:fixed;inset:0;background:rgba(10,15,14,.42);z-index:80;display:flex;align-items:flex-end;justify-content:center}
+.modal{background:var(--surface);color:var(--ink);width:min(520px,100%);border-radius:18px 18px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px}
+@media (min-width:700px){.scrim{align-items:center}.modal{border-radius:18px;padding-bottom:20px}}
+.modal h3{margin:0 0 4px;font-family:var(--serif);font-size:19px}
+.modal p{margin:0 0 6px;color:var(--muted);font-size:14px;line-height:1.6}
+.modal .btn{width:100%;border-radius:12px;padding:12px}
+.busy{position:fixed;left:12px;right:12px;margin:0 auto;width:fit-content;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:90;background:var(--ink);color:var(--bg);
+  padding:11px 18px;border-radius:12px;font-size:14px;max-width:min(92vw,520px);box-shadow:var(--shadow);line-height:1.5}
+
+/* ---------- Reader ---------- */
+.reader{position:fixed;inset:0;z-index:50;background:var(--rbg);color:var(--rink);
+  --rbg:var(--surface);--rink:var(--ink);--rmuted:var(--muted);--rline:var(--line);
+  --fs:19px;--lh:1.85;--mg:22px;--ff:var(--serif)}
+.reader[data-rt="white"]{--rbg:#fbfbf9;--rink:#232323;--rmuted:#7a7a74;--rline:#e2e2dc}
+.reader[data-rt="paper"]{--rbg:#ece3cf;--rink:#3a3125;--rmuted:#83745d;--rline:#d6c9ae}
+.reader[data-rt="green"]{--rbg:#cde2cf;--rink:#20301f;--rmuted:#5b7259;--rline:#b2cdb4}
+.reader[data-rt="night"]{--rbg:#111413;--rink:#a7b1ad;--rmuted:#6a7571;--rline:#262c2a}
+.scroller{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;overflow-anchor:none}
+.content{max-width:40em;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 34px) var(--mg) calc(env(safe-area-inset-bottom,0px) + 56px);
+  font-family:var(--ff);font-size:var(--fs);line-height:var(--lh);text-align:justify;word-break:normal;overflow-wrap:break-word}
+.content p{margin:0 0 .45em;text-indent:2em}
+.reader.noindent .content p{text-indent:0;margin-bottom:.8em}
+.content.en p{text-indent:0;margin-bottom:.85em;hyphens:auto;-webkit-hyphens:auto}
+.content h1,.content h2,.content h3,.content h4{font-weight:600;line-height:1.4;text-indent:0;text-align:left;margin:.4em 0 1.1em}
+.content h1{font-size:1.45em}.content h2{font-size:1.3em}.content h3{font-size:1.15em}
+.content .ch-title{font-size:1.35em;margin:0 0 1.4em}
+.content img{max-width:100%;height:auto;display:block;margin:1em auto;border-radius:2px}
+.content blockquote{margin:1em 0;padding-left:1em;border-left:3px solid var(--rline);color:var(--rmuted)}
+.content pre{white-space:pre-wrap;font-size:.85em}
+.content table{border-collapse:collapse;font-size:.9em;display:block;overflow-x:auto}
+.content td,.content th{border:1px solid var(--rline);padding:4px 8px}
+.chap+.chap{margin-top:3.2em;padding-top:2.4em;border-top:1px solid var(--rline)}
+.book-end{text-align:center;color:var(--rmuted);font-family:var(--ui);font-size:14px;margin:3em 0 1em;text-indent:0}
+.ch-end{display:flex;justify-content:space-between;gap:12px;margin-top:3em;padding-top:1.4em;border-top:1px solid var(--rline);font-family:var(--ui);font-size:15px}
+.ch-end button{background:none;border:1px solid var(--rline);border-radius:10px;padding:10px 14px;color:var(--rink);max-width:48%;text-align:left;line-height:1.4}
+.ch-end button span{display:block;font-size:12px;color:var(--rmuted)}
+.ch-end .next{margin-left:auto;text-align:right}
+.loading{font-family:var(--ui);color:var(--rmuted);text-align:center;padding-top:30vh;line-height:1.7;font-size:15px;text-indent:0}
+.loading .btn{margin-top:14px}
+
+.pdfwrap{padding:calc(env(safe-area-inset-top,0px) + 12px) 0 calc(env(safe-area-inset-bottom,0px) + 40px)}
+.pdfpage{position:relative;width:min(100%,960px);margin:0 auto 10px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.pdfpage canvas{position:absolute;inset:0;width:100%;height:100%}
+.pdfpage .pn{position:absolute;inset:0;display:grid;place-items:center;color:#999;font-size:13px}
+.reader[data-rt="night"] .pdfpage canvas,.reader[data-rt="night"] .pdfpage{filter:invert(.9) hue-rotate(180deg)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .reader[data-rt="auto"] .pdfpage{filter:invert(.9) hue-rotate(180deg)}}
+
+.rbar{position:absolute;left:0;right:0;z-index:5;background:var(--rbg);color:var(--rink);border-color:var(--rline);
+  transition:transform .22s ease,opacity .22s ease;font-family:var(--ui)}
+.rbar.top{top:0;padding:calc(env(safe-area-inset-top,0px) + 6px) 10px 8px;border-bottom:1px solid var(--rline);display:flex;align-items:center;gap:8px}
+.rbar.bottom{bottom:0;padding:10px 14px calc(env(safe-area-inset-bottom,0px) + 10px);border-top:1px solid var(--rline)}
+.reader:not(.chrome) .rbar.top{transform:translateY(-100%);opacity:0;pointer-events:none}
+.reader:not(.chrome) .rbar.bottom{transform:translateY(100%);opacity:0;pointer-events:none}
+.rbtn{background:none;border:0;padding:8px 10px;border-radius:8px;font-size:15px;color:var(--rink);white-space:nowrap}
+.rtitle{flex:1;min-width:0;text-align:center;font-size:14px;color:var(--rmuted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prow{display:flex;align-items:center;gap:8px}
+.prow input[type=range]{flex:1;accent-color:var(--accent)}
+.prow2{display:flex;align-items:center;justify-content:space-between;margin-top:6px;font-size:13px;color:var(--rmuted)}
+.prow2 #rPos{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:10px}
+.rmini{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 6px);text-align:center;font-family:var(--ui);font-size:11px;color:var(--rmuted);pointer-events:none;opacity:.8}
+.reader.chrome .rmini{opacity:0}
+
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:8;background:var(--rbg);color:var(--rink);border-top:1px solid var(--rline);
+  border-radius:16px 16px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.18);max-height:72%;display:flex;flex-direction:column;font-family:var(--ui);
+  padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (min-width:760px){.sheet{left:auto;right:16px;bottom:16px;width:380px;border-radius:16px;border:1px solid var(--rline)}}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 8px}
+.sheet-head b{font-size:16px}
+.toc{overflow-y:auto;padding:0 8px 12px}
+.toc button{display:block;width:100%;text-align:left;background:none;border:0;padding:11px 12px;border-radius:8px;font-size:15px;color:var(--rink);line-height:1.4}
+.toc button.cur{color:var(--accent);font-weight:600}
+.toc button.l2{padding-left:28px;font-size:14px}
+.aa{overflow-y:auto;padding:4px 18px 18px;display:flex;flex-direction:column;gap:16px}
+.row{display:flex;align-items:center;gap:12px}
+.row>span:first-child{width:4.5em;flex:none;font-size:14px;color:var(--rmuted)}
+.row input[type=range]{flex:1;accent-color:var(--accent)}
+.seg{display:flex;flex:1;border:1px solid var(--rline);border-radius:10px;overflow:hidden}
+.seg button{flex:1;background:none;border:0;padding:9px 4px;font-size:14px;color:var(--rink);border-left:1px solid var(--rline)}
+.seg button:first-child{border-left:0}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.sizebox{display:flex;flex:1;align-items:center;justify-content:space-between}
+.sizebox button{width:52px;height:38px;border:1px solid var(--rline);border-radius:10px;background:none;color:var(--rink)}
+.sw{display:flex;gap:10px;flex:1}
+.sw button{width:38px;height:38px;border-radius:50%;border:2px solid var(--rline);font-size:11px}
+.sw button.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--rbg) inset}
+.tog{display:flex;align-items:center;justify-content:space-between;font-size:14px}
+.tog input{width:20px;height:20px;accent-color:var(--accent)}
+.note{font-size:13px;color:var(--rmuted);line-height:1.6}
+.toast{position:absolute;left:12px;right:12px;margin:0 auto;width:fit-content;max-width:520px;top:calc(env(safe-area-inset-top,0px) + 62px);z-index:9;background:var(--ink);color:var(--bg);
+  border-radius:14px;padding:12px 10px 12px 18px;display:flex;align-items:center;gap:14px;font-family:var(--ui);font-size:14px;line-height:1.5;box-shadow:var(--shadow)}
+.toast .tmsg{flex:1;min-width:0;display:flex;flex-direction:column}
+.toast .tmsg small{font-size:12px;opacity:.7}
+.toast .tmsg b{font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toast button{background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:7px 12px;font-weight:600;white-space:nowrap}
+.toast .x{background:none;color:inherit;opacity:.7;padding:7px 6px}
+mark.hl{background:rgba(250,204,21,.42);color:inherit;border-radius:2px;padding:0 1px;cursor:pointer}
+.reader[data-rt="night"] mark.hl{background:rgba(202,160,40,.36)}
+.hlpill{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 72px);z-index:9;background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:12px 22px;font-family:var(--ui);font-size:15px;font-weight:600;box-shadow:var(--shadow)}
+.toc .hlitem{display:flex;gap:8px;align-items:flex-start;padding:8px 4px 8px 12px;border-bottom:1px solid var(--rline)}
+.toc .hlitem .go{flex:1;width:auto;padding:4px 0;font-size:15px;line-height:1.55}
+.toc .hlitem .go span{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;border-left:3px solid rgba(250,204,21,.85);padding-left:9px}
+.toc .hlitem .go small{display:block;color:var(--rmuted);font-size:12px;margin:4px 0 0 12px}
+.toc .hlitem .del{width:auto;display:inline-block;color:var(--rmuted);padding:6px 8px}
+.toc .hl-empty{padding:18px 12px;color:var(--rmuted);font-size:14px;line-height:1.7}
+.sheet-head .seg{flex:0 0 auto;width:170px}
+/* ---------- motion ---------- */
+:root{--ease:cubic-bezier(.22,.8,.24,1);--ease-in:cubic-bezier(.4,0,.8,.4)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeOut{from{opacity:1}to{opacity:0}}
+@keyframes riseIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes sheetIn{from{opacity:.4;transform:translateY(100%)}to{opacity:1;transform:none}}
+@keyframes sheetOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(40%)}}
+@keyframes popIn{from{opacity:0;transform:scale(.94) translateY(8px)}to{opacity:1;transform:none}}
+@keyframes popOut{from{opacity:1;transform:none}to{opacity:0;transform:scale(.97) translateY(6px)}}
+@keyframes dropIn{from{opacity:0;transform:translateY(-14px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes pillIn{0%{opacity:0;transform:translateX(-50%) translateY(10px) scale(.9)}100%{opacity:1;transform:translateX(-50%)}}
+@keyframes hlIn{from{background-color:rgba(250,204,21,0)}50%{background-color:rgba(250,204,21,.75)}to{background-color:rgba(250,204,21,.42)}}
+@keyframes tickPop{0%{transform:scale(.6)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes readerIn{from{opacity:0;transform:translateY(24px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes readerOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(18px) scale(.985)}}
+.reader.entering{animation:readerIn .34s var(--ease) both}
+.reader.leaving{animation:readerOut .22s var(--ease-in) both;pointer-events:none}
+.reader{transition:background-color .35s ease,color .35s ease}
+.content.fadein{animation:fadeIn .32s ease both}
+.rbar{transition:transform .3s var(--ease),opacity .25s ease!important}
+.sheet:not([hidden]){animation:sheetIn .34s var(--ease) both}
+.sheet.out{animation:sheetOut .2s var(--ease-in) both;pointer-events:none}
+@media (min-width:760px){.sheet:not([hidden]){animation-name:popIn}.sheet.out{animation-name:popOut}}
+.scrim{animation:fadeIn .22s ease both}
+.scrim .modal{animation:sheetIn .34s var(--ease) both}
+@media (min-width:700px){.scrim .modal{animation-name:popIn}}
+.scrim.out{animation:fadeOut .2s ease both;pointer-events:none}
+.scrim.out .modal{animation:sheetOut .2s var(--ease-in) both}
+@media (min-width:700px){.scrim.out .modal{animation-name:popOut}}
+.toast:not([hidden]){animation:dropIn .36s var(--ease) both}
+.busy:not([hidden]){animation:riseIn .3s var(--ease) both}
+.hlpill:not([hidden]){animation:pillIn .28s var(--ease) both}
+.selbar:not([hidden]){animation:riseIn .3s var(--ease) both}
+mark.hl.fresh{animation:hlIn .7s ease both}
+.grid.anim .card{animation:riseIn .45s var(--ease) both;animation-delay:calc(var(--i,0) * 28ms)}
+.resume.anim{animation:riseIn .45s var(--ease) both}
+.cover{transition:transform .25s var(--ease),box-shadow .25s ease,opacity .25s ease}
+.card-open:active .cover{transform:scale(.96)}
+@media (hover:hover){.card-open:hover .cover{transform:translateY(-3px);box-shadow:0 2px 4px rgba(20,30,28,.14),0 12px 26px rgba(20,30,28,.14)}}
+.card.sel .tick{animation:tickPop .3s var(--ease)}
+.bar i{transition:width .6s var(--ease)}
+.chip,.btn,.rbtn,.seg button,.sw button,.resume,.toc button{transition:background-color .2s ease,color .2s ease,border-color .2s ease,transform .15s ease,opacity .2s ease}
+.chip:active,.btn:active,.resume:active,.sw button:active{transform:scale(.96)}
+.rbtn:active,.toc button:active{opacity:.55}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (prefers-reduced-motion: reduce){.rbar{transition:none}}
+</style>
+</head>
+<body>
+
+<section class="auth" id="auth" hidden>
+  <div class="auth-card">
+    <h1>书斋</h1>
+    <p class="auth-sub" id="authSub">登入后，手机和 iPad 的书、进度和划线会自动同步。</p>
+    <form id="authForm" autocomplete="on">
+      <div id="cfgFields" hidden>
+        <label>Supabase 项目网址<input id="cfgUrl" type="url" placeholder="https://xxxx.supabase.co" autocomplete="off"></label>
+        <label>anon / publishable key<input id="cfgKey" type="text" placeholder="eyJ… 或 sb_publishable_…" autocomplete="off"></label>
+      </div>
+      <div id="loginFields">
+        <label>电邮<input id="authEmail" type="email" autocomplete="username" required></label>
+        <label>密码<input id="authPass" type="password" autocomplete="current-password" minlength="6" required></label>
+      </div>
+      <p class="auth-msg" id="authMsg" role="alert"></p>
+      <button class="btn primary" id="authGo" type="submit">登入</button>
+      <button class="btn" id="authSwitch" type="button">第一次用？注册账号</button>
+    </form>
+  </div>
+</section>
+
+<main class="lib" id="lib">
+  <div class="lib-head">
+    <div>
+      <h1>书斋</h1>
+      <div class="sync"><span class="dot" id="syncDot"></span><span id="syncText">正在连接…</span></div>
+    </div>
+    <div class="head-actions">
+      <button class="btn" id="recBtn" hidden>✨ 荐书</button>
+      <button class="btn icon" id="libMore" aria-label="更多">⋯</button>
+      <button class="btn primary" id="addBtn">添加书籍</button>
+    </div>
+  </div>
+  <div class="chips" id="chips"></div>
+  <button class="resume" id="resume" hidden></button>
+  <div id="grid"></div>
+  <div class="empty" id="empty" hidden>
+    <p>书架还是空的。从手机或 iPad 里选一本 TXT、EPUB、PDF、DOCX 开始，传上去之后两台设备都能读，进度会自动同步。</p>
+    <button class="btn primary" id="addBtn2">选择文件</button>
+  </div>
+  <div class="foot" id="foot"></div>
+  <input type="file" id="fileIn" multiple hidden>
+  <div class="selbar" id="selBar" hidden>
+    <span id="selN"></span>
+    <button data-a="all" id="selAll">全选</button>
+    <button data-a="group" data-need>分组</button>
+    <button data-a="status" data-need>标记</button>
+    <button data-a="del" data-need class="danger">删除</button>
+    <button data-a="cancel">完成</button>
+  </div>
+</main>
+
+<div class="reader" id="reader" hidden data-rt="auto">
+  <div class="scroller" id="scroller"><article class="content" id="content"></article></div>
+  <div class="rmini" id="rMini"></div>
+  <header class="rbar top">
+    <button class="rbtn" id="rBack">‹ 书架</button>
+    <div class="rtitle" id="rTitle"></div>
+    <button class="rbtn" id="rScBtn" hidden>繁</button>
+    <button class="rbtn" id="rFsBtn">全屏</button>
+    <button class="rbtn" id="rTocBtn">目录</button>
+  </header>
+  <footer class="rbar bottom">
+    <div class="prow">
+      <button class="rbtn" id="rPrev">上一章</button>
+      <input type="range" id="rSlider" min="0" max="0" step="1" aria-label="跳转">
+      <button class="rbtn" id="rNext">下一章</button>
+    </div>
+    <div class="prow2"><span id="rPos"></span><button class="rbtn" id="rAaBtn" aria-label="阅读设置">Aa 设置</button></div>
+  </footer>
+
+  <section class="sheet" id="sheetToc" hidden>
+    <div class="sheet-head"><div class="seg" id="tocSeg"><button data-v="toc" class="on">目录</button><button data-v="hl">划线</button></div><button class="rbtn" data-close>完成</button></div>
+    <div class="toc" id="tocList"></div>
+  </section>
+
+  <section class="sheet" id="sheetAa" hidden>
+    <div class="sheet-head"><b>阅读设置</b><button class="rbtn" data-close>完成</button></div>
+    <div class="aa">
+      <div class="row textonly"><span>字号</span>
+        <div class="sizebox"><button id="fsDown" aria-label="缩小">A−</button><b id="fsVal">19</b><button id="fsUp" aria-label="放大">A+</button></div></div>
+      <div class="row textonly"><span>字体</span>
+        <div class="seg" id="fontSeg">
+          <button data-v="sans">黑体</button><button data-v="serif">宋体</button><button data-v="kai">楷体</button><button data-v="latin">英文</button>
+        </div></div>
+      <div class="row textonly"><span>行距</span><input type="range" id="lhIn" min="1.4" max="2.5" step="0.05"></div>
+      <div class="row textonly"><span>页边距</span><input type="range" id="mgIn" min="8" max="72" step="2"></div>
+      <div class="row"><span>背景</span>
+        <div class="sw" id="themeSw">
+          <button data-v="white" style="background:#fbfbf9" aria-label="白"></button>
+          <button data-v="paper" style="background:#ece3cf" aria-label="纸"></button>
+          <button data-v="green" style="background:#cde2cf" aria-label="护眼绿"></button>
+          <button data-v="night" style="background:#111413" aria-label="夜间"></button>
+        </div></div>
+      <label class="tog textonly">首行缩进<input type="checkbox" id="indentIn"></label>
+      <label class="tog">点屏幕左右两侧翻页<input type="checkbox" id="tapIn"></label>
+      <label class="tog">打开书时自动全屏<input type="checkbox" id="autoFsIn"></label>
+      <label class="tog">翻页动画<input type="checkbox" id="animIn"></label>
+      <div class="note pdfonly" hidden>PDF 按原版排版显示，字号和字体设置不适用。夜间背景会把页面反色。</div>
+      <div class="note">设置只保存在这台设备上，所以手机和 iPad 可以用不同的字号。</div>
+      <button class="rbtn" id="dbgBtn" style="align-self:flex-start;color:var(--rmuted);font-size:13px;padding:4px 0">调试记录</button>
+    </div>
+  </section>
+  <button class="hlpill" id="hlPill" hidden>✎ 划线</button>
+  <div class="toast" id="rToast" hidden></div>
+</div>
+
+<div class="busy" id="busy" hidden></div>
+
+<script>
+(() => {
+'use strict';
+/* ---------------- helpers ---------------- */
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+const LIB = {
+  jszip: 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
+  mammoth: 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js',
+  pdfw: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
+  pdf: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
+  opencc: 'https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.js'
+};
+const loaded = {};
+function loadScript(src) {
+  if (!loaded[src]) loaded[src] = new Promise((res, rej) => {
+    const s = document.createElement('script'); s.src = src;
+    s.onload = res; s.onerror = () => { delete loaded[src]; rej(new Error('需要联网下载解析组件，请连上网再试')); };
+    document.head.appendChild(s);
+  });
+  return loaded[src];
+}
+async function loadPdfJs() {
+  await loadScript(LIB.pdfw); await loadScript(LIB.pdf);
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc = LIB.pdfw;
+  return window.pdfjsLib;
+}
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const COLORS = ['#3c5c70', '#6a4c37', '#356f62', '#7a3b46', '#4a4e7a', '#5a6838', '#86672c', '#2e5b58', '#5b3f63', '#804a2c'];
+function colorFor(s) { let h = 0; for (const ch of String(s)) h = (h * 31 + ch.codePointAt(0)) >>> 0; return COLORS[h % COLORS.length]; }
+const FMT_LABEL = { txt: 'TXT', md: 'MD', epub: 'EPUB', pdf: 'PDF', docx: 'DOCX', html: 'HTML' };
+function fmtSize(n) { return n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB'; }
+
+const DEV = (() => {
+  let id = LS.get('sz.dev'); if (!id) { id = newId(); LS.set('sz.dev', id); }
+  const ua = navigator.userAgent;
+  let name = '电脑';
+  if (/iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) name = 'iPad';
+  else if (/iPhone/.test(ua)) name = 'iPhone';
+  else if (/Android/.test(ua)) name = /Mobile/.test(ua) ? '手机' : '平板';
+  return { id, name };
+})();
+
+/* ---------------- IndexedDB (offline book cache) ---------------- */
+const idb = (() => {
+  let p;
+  const open = () => p || (p = new Promise((res, rej) => {
+    const r = indexedDB.open('shuzhai', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('books');
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  }));
+  const run = async (mode, fn) => {
+    try {
+      const d = await open();
+      return await new Promise((res, rej) => { const q = fn(d.transaction('books', mode).objectStore('books')); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
+    } catch (e) { return undefined; }
+  };
+  return {
+    get: k => run('readonly', s => s.get(k)),
+    put: (k, v) => run('readwrite', s => s.put(v, k)),
+    del: k => run('readwrite', s => s.delete(k)),
+    keys: async () => (await run('readonly', s => s.getAllKeys())) || []
+  };
+})();
+
+/* ---------------- state ---------------- */
+const S = { animGrid: true, db: null, assets: null, uid: null, remote: [], books: new Map(), cached: new Set(), sync: 'connecting', cur: null, hl: {}, noHide: 0, userAct: 0 };
+const DEF = { size: 19, lh: 1.85, font: 'serif', theme: 'white', margin: 22, indent: true, tap: true, autoFs: true, anim: true };
+let SET = Object.assign({}, DEF, LS.get('sz.set', {}));
+if (!['white', 'paper', 'green', 'night'].includes(SET.theme)) SET.theme = 'white';
+if (SET.script === 'orig') SET.script = 'hans';
+/* iPad can wipe this page's local storage, so each device type also keeps its settings in the cloud */
+const DEVKEY = { iPad: 'ipad', iPhone: 'iphone', '手机': 'phone', '平板': 'tablet', '电脑': 'desktop' }[DEV.name] || 'other';
+let setT;
+function pushSettings() { clearTimeout(setT); setT = setTimeout(() => { if (S.db && S.uid) S.db.doc('data/users/' + S.uid + '/set_' + DEVKEY).set(Object.assign({}, SET)).catch(() => {}); }, 800); }
+const cacheKey = b => b.asset || ('local:' + b.id);
+const docPath = id => 'data/users/' + S.uid + '/book_' + id;
+
+function localProg(id) { return LS.get('sz.p.' + id, null); }
+function effProg(b) {
+  const l = localProg(b.id), r = b.progress;
+  if (l && (!r || (l.at || 0) >= (r.at || 0))) return l;
+  return r || null;
+}
+function rebuildBooks() {
+  const m = new Map();
+  for (const r of S.remote) m.set(r.id, r);
+  for (const r of LS.get('sz.local', [])) m.set(r.id, Object.assign({}, r, { localOnly: true }));
+  S.books = m;
+}
+
+/* ---------------- sync status ---------------- */
+function setSync(state) {
+  S.sync = state;
+  const map = {
+    connecting: ['', '正在连接…'],
+    ok: ['ok', '已同步 · ' + DEV.name],
+    slow: ['warn', '同步服务暂时连不上，先显示本机记录'],
+    offline: ['warn', '离线中，进度会在联网后同步'],
+    local: ['warn', '还没登入'],
+    err: ['err', '同步出错，重新打开页面再试']
+  };
+  const [cls, txt] = map[state] || map.connecting;
+  $('#syncDot').className = 'dot ' + cls; $('#syncText').textContent = txt;
+}
+window.addEventListener('offline', () => { if (S.db) setSync('offline'); });
+window.addEventListener('online', () => { if (S.db) { setSync('ok'); flushRemote(); } });
+
+/* ---------------- library ---------------- */
+function lastTouch(b) { const p = effProg(b); return Math.max(p ? p.at || 0 : 0, b.addedAt || 0); }
+function progLabel(b, p) {
+  if (!p) return '未开始';
+  if (p.pct >= 0.995) return '已读完';
+  return Math.max(1, Math.round(p.pct * 100)) + '%';
+}
+function goodCover(c) { return typeof c === 'string' && /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(c); }
+function makeThumb(src) {
+  return new Promise(res => {
+    const im = new Image();
+    im.onload = () => {
+      try {
+        const w = 240, h = Math.round(im.naturalHeight * w / im.naturalWidth) || 320;
+        const c = document.createElement('canvas'); c.width = w; c.height = Math.min(h, 480);
+        const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, w, c.height); g.drawImage(im, 0, 0, w, h);
+        res(c.toDataURL('image/jpeg', 0.72));
+      } catch (e) { res(null); }
+    };
+    im.onerror = () => res(null); im.src = src;
+  });
+}
+/* books uploaded before covers existed: pull the cover out of the saved EPUB */
+let coverBusy = false;
+async function backfillCovers() {
+  if (coverBusy || !S.db) return; coverBusy = true;
+  try {
+    for (const b of [...S.books.values()]) {
+      if (b.fmt !== 'epub' || b.cover || b.localOnly || LS.get('sz.cv.' + b.id)) continue;
+      LS.set('sz.cv.' + b.id, 1);
+      const data = await ensureCached(b); if (!data) continue;
+      let src = null;
+      try { for (const c of (JSON.parse(data).chapters || []).slice(0, 3)) { const m = /<img[^>]+src="(data:image\/[^"]+)"/.exec(c.h); if (m) { src = m[1]; break; } } } catch (e) {}
+      if (!src) continue;
+      const th = await makeThumb(src); if (!th) continue;
+      try { await S.db.doc(docPath(b.id)).update({ cover: th }); } catch (e) {}
+    }
+  } finally { coverBusy = false; }
+}
+async function refreshCached() { S.cached = new Set(await idb.keys()); }
+
+/* ---------------- modal / busy ---------------- */
+function modal(title, text, actions) {
+  return new Promise(res => {
+    const scrim = el('div', 'scrim'); const m = el('div', 'modal'); m.setAttribute('role', 'dialog');
+    m.append(el('h3', '', title)); if (text) m.append(el('p', '', text));
+    for (const a of actions) {
+      const b = el('button', 'btn' + (a.cls ? ' ' + a.cls : ''), a.label);
+      b.onclick = () => { closeScrim(scrim); res(a.v); }; m.append(b);
+    }
+    scrim.onclick = e => { if (e.target === scrim) { closeScrim(scrim); res(null); } };
+    scrim.append(m); document.body.append(scrim); m.querySelector('button').focus();
+  });
+}
+let busyT;
+function busy(msg, ms) {
+  const b = $('#busy'); clearTimeout(busyT);
+  if (!msg) { b.hidden = true; return; }
+  b.textContent = msg; b.hidden = false;
+  if (ms) busyT = setTimeout(() => { b.hidden = true; }, ms);
+}
+
+/* ---------------- multi-select & adding books to a group ---------------- */
+async function updateMany(books, patch) {
+  const loc = LS.get('sz.local', []);
+  for (const b of books) {
+    if (b.localOnly) { const x = loc.find(y => y.id === b.id); if (x) Object.assign(x, patch); }
+    else {
+      const r = S.remote.find(x => x.id === b.id); if (r) Object.assign(r, patch);
+      if (S.db) writing = writing.then(() => S.db.doc(docPath(b.id)).update(patch)).catch(() => busy('有些改动没存到云端，检查网络后再试', 2500));
+    }
+  }
+  LS.set('sz.local', loc); LS.set('sz.lib', S.remote); rebuildBooks(); renderLibrary();
+}
+async function chooseGroup(title, cur) {
+  const gs = allGroups();
+  const acts = gs.map(g => ({ label: (cur === g ? '✓ ' : '') + g, v: 'g:' + g }));
+  acts.push({ label: (cur === '' ? '✓ ' : '') + '不分组', v: 'g:' }, { label: '＋ 新建分组', v: 'new' }, { label: '取消', v: null });
+  const v = await modal(title, '', acts);
+  if (v === 'new') {
+    const name = await askText('新分组名字', '', '例如：小说、学习成长'); if (!name) return null;
+    if (!S.groups.includes(name)) saveGroups(S.groups.concat([name]));
+    return name;
+  }
+  return v == null ? null : v.slice(2);
+}
+function setSelect(on) {
+  S.sel = on ? new Set() : null;
+  document.body.classList.toggle('selecting', !!on);
+  renderLibrary();
+}
+function visibleBooks() {
+  return [...S.books.values()].filter(b => S.grp === '' ? true : S.grp === '__none' ? !b.group : b.group === S.grp);
+}
+function renderSelBar() {
+  const bar = $('#selBar'); bar.hidden = !S.sel; if (!S.sel) return;
+  const n = S.sel.size;
+  $('#selN').textContent = n ? '已选 ' + n + ' 本' : '点书本来选择';
+  bar.querySelectorAll('[data-need]').forEach(b => { b.disabled = !n; });
+  const all = visibleBooks(); $('#selAll').textContent = all.length && all.every(b => S.sel.has(b.id)) ? '全不选' : '全选';
+}
+$('#selBar').onclick = async e => {
+  const a = e.target.closest('button'); if (!a || a.disabled) return;
+  const act = a.dataset.a;
+  const picked = [...S.sel].map(id => S.books.get(id)).filter(Boolean);
+  if (act === 'cancel') return setSelect(false);
+  if (act === 'all') { const all = visibleBooks(); if (all.every(b => S.sel.has(b.id))) S.sel.clear(); else all.forEach(b => S.sel.add(b.id)); return renderLibrary(); }
+  if (act === 'group') { const g = await chooseGroup(picked.length + ' 本书放到哪个分组？', null); if (g === null) return; updateMany(picked, { group: g }); busy('已移到「' + (g || '不分组') + '」', 1600); setSelect(false); }
+  if (act === 'status') {
+    const v = await modal(picked.length + ' 本书标记为…', '', [{ label: '在读', v: 'reading' }, { label: '读不下', v: 'dropped' }, { label: '已读', v: 'done' }, { label: '取消', v: null }]);
+    if (!v) return; updateMany(picked, { status: v }); busy('已标记为「' + STATUS[v] + '」', 1600); setSelect(false);
+  }
+  if (act === 'del') {
+    const ok = await modal('删除 ' + picked.length + ' 本书？', '书、阅读进度和划线会从所有设备删除，不能恢复。', [{ label: '删除', v: 1, cls: 'danger' }, { label: '取消', v: 0 }]);
+    if (!ok) return;
+    for (const b of picked) await deleteBook(b);
+    busy('已删除 ' + picked.length + ' 本', 2000); setSelect(false);
+  }
+};
+/* replace a book's file but keep its id, so progress, highlights, reading time and group stay */
+function pickFile() {
+  return new Promise(res => {
+    const i = document.createElement('input'); i.type = 'file'; i.style.display = 'none';
+    i.onchange = () => { res(i.files[0] || null); i.remove(); };
+    document.body.append(i); i.click();
+  });
+}
+async function replaceBook(b, given, parsed) {
+  const f = given || await pickFile(); if (!f) return;
+  try {
+    busy('正在解析《' + f.name + '》…');
+    const r = parsed || await parseFile(f);
+    if (r.kind !== b.kind) throw new Error('格式不一样。替换要用同一种格式的文件（例如 EPUB 换 EPUB），不然进度对不上。');
+    const patch = { size: r.blob.size, count: r.count, fmt: r.fmt, lang: r.lang, needFile: false };
+    if (r.cover) patch.cover = r.cover;
+    const oldKey = cacheKey(b), oldIds = Array.isArray(b.parts) ? b.parts : (b.asset ? [b.asset] : []);
+    if (b.localOnly) {
+      await idb.put(oldKey, r.cache);
+      LS.set('sz.local', LS.get('sz.local', []).map(x => x.id === b.id ? Object.assign({}, x, patch) : x));
+    } else {
+      if (!S.db || !S.assets) throw new Error('现在没连上同步，联网后再试。');
+      const up = await uploadBook(r, b.title);
+      patch.asset = up.asset; patch.parts = up.parts || null; patch.b64 = !!up.b64;
+      await idb.put(up.asset, r.cache);
+      await S.db.doc(docPath(b.id)).update(patch);
+      const rr = S.remote.find(x => x.id === b.id); if (rr) Object.assign(rr, patch); LS.set('sz.lib', S.remote);
+      for (const id of oldIds) { try { await S.assets.delete(id); } catch (e) {} }
+      await idb.del(oldKey);
+    }
+    rebuildBooks(); await refreshCached(); renderLibrary();
+    busy(b.needFile ? '《' + b.title + '》已接回进度和划线' : '已替换，进度和划线都保留了', 2500);
+  } catch (e) {
+    busy(null);
+    await modal('替换失败', (e && e.message) || String(e), [{ label: '知道了', v: 1 }]);
+  }
+}
+async function addToGroup(g) {
+  const v = await modal('往「' + g + '」加书', '', [{ label: '从书架上选', v: 'shelf' }, { label: '从手机 / iPad 上传新书', v: 'upload' }, { label: '取消', v: null }]);
+  if (v === 'upload') fileIn.click();
+  if (v === 'shelf') pickBooks(g);
+}
+function pickBooks(g) {
+  const cands = [...S.books.values()].filter(b => b.group !== g).sort((a, b) => lastTouch(b) - lastTouch(a));
+  const scrim = el('div', 'scrim'); const m = el('div', 'modal');
+  m.append(el('h3', '', '选书加入「' + g + '」'));
+  const chosen = new Set();
+  const ok = el('button', 'btn primary', '加入'); ok.disabled = true;
+  if (!cands.length) m.append(el('p', '', '书架上的书都已经在这个分组里了。'));
+  else {
+    const list = el('div', 'pick');
+    for (const b of cands) {
+      const row = el('label'); const cb = el('input'); cb.type = 'checkbox';
+      cb.onchange = () => { cb.checked ? chosen.add(b.id) : chosen.delete(b.id); ok.textContent = chosen.size ? '加入 ' + chosen.size + ' 本' : '加入'; ok.disabled = !chosen.size; };
+      const pm = el('span', 'pm'); pm.style.setProperty('--c', colorFor(b.title));
+      if (goodCover(b.cover)) { const im = el('img'); im.alt = ''; im.src = b.cover; pm.append(im); }
+      const pt = el('span', 'pt'); pt.append(el('b', '', b.title), el('small', '', (b.group ? '目前在「' + b.group + '」' : '未分组') + '，' + STATUS[statusOf(b)]));
+      row.append(cb, pm, pt); list.append(row);
+    }
+    m.append(list);
+  }
+  const no = el('button', 'btn', '取消');
+  ok.onclick = () => { closeScrim(scrim); updateMany(cands.filter(b => chosen.has(b.id)), { group: g }); busy('已加入「' + g + '」', 1600); };
+  no.onclick = () => closeScrim(scrim); scrim.onclick = e => { if (e.target === scrim) closeScrim(scrim); };
+  if (cands.length) m.append(ok); m.append(no); scrim.append(m); document.body.append(scrim);
+}
+
+/* ---------------- groups & reading status ---------------- */
+S.groups = LS.get('sz.groups', []);
+S.grp = LS.get('sz.grp', '');
+const STATUS = { reading: '在读', dropped: '读不下', done: '已读' };
+const statusOf = b => (b.status === 'done' || b.status === 'dropped') ? b.status : 'reading';
+function allGroups() {
+  const out = S.groups.slice();
+  for (const b of S.books.values()) if (b.group && !out.includes(b.group)) out.push(b.group);
+  return out;
+}
+function saveGroups(list) {
+  S.groups = list; LS.set('sz.groups', list);
+  if (S.db) S.db.doc('data/users/' + S.uid + '/shelf').set({ groups: list, at: Date.now() }).catch(() => {});
+}
+async function updateBook(b, patch) { return updateMany([b], patch); }
+function askText(title, value, placeholder) {
+  return new Promise(res => {
+    const scrim = el('div', 'scrim'); const m = el('div', 'modal');
+    const inp = el('input'); inp.type = 'text'; inp.value = value || ''; inp.placeholder = placeholder || ''; inp.maxLength = 20;
+    inp.style.cssText = 'width:100%;font:inherit;font-size:16px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)';
+    const ok = el('button', 'btn primary', '确定'), no = el('button', 'btn', '取消');
+    const done = v => { closeScrim(scrim); res(v); };
+    ok.onclick = () => done(inp.value.trim()); no.onclick = () => done(null);
+    inp.onkeydown = e => { if (e.key === 'Enter') done(inp.value.trim()); };
+    scrim.onclick = e => { if (e.target === scrim) done(null); };
+    m.append(el('h3', '', title), inp, ok, no); scrim.append(m); document.body.append(scrim); inp.focus();
+  });
+}
+async function pickGroup(b) { const g = await chooseGroup('《' + b.title + '》放到哪个分组？', b.group || ''); if (g !== null) updateBook(b, { group: g }); }
+async function manageGroups() {
+  const gs = allGroups();
+  if (!gs.length) { const name = await askText('新分组名字', '', '例如：小说、学习成长'); if (name) { saveGroups([name]); renderLibrary(); } return; }
+  const v = await modal('管理分组', '点分组可以改名或删除。删除分组不会删书，书会变成「不分组」。', gs.map(g => ({ label: g, v: g })).concat([{ label: '＋ 新建分组', v: '__new' }, { label: '关闭', v: null }]));
+  if (v === '__new') { const name = await askText('新分组名字', '', '例如：小说、学习成长'); if (name && !gs.includes(name)) saveGroups(gs.concat([name])); renderLibrary(); return; }
+  if (!v) return;
+  const act = await modal('分组「' + v + '」', '', [{ label: '改名', v: 'rename' }, { label: '删除这个分组', v: 'del', cls: 'danger' }, { label: '取消', v: null }]);
+  if (act === 'rename') {
+    const name = await askText('改名', v); if (!name || name === v) return;
+    saveGroups(gs.map(g => g === v ? name : g).filter((g, i, a) => a.indexOf(g) === i));
+    for (const b of [...S.books.values()]) if (b.group === v) await updateBook(b, { group: name });
+    if (S.grp === v) { S.grp = name; LS.set('sz.grp', name); }
+  } else if (act === 'del') {
+    saveGroups(gs.filter(g => g !== v));
+    for (const b of [...S.books.values()]) if (b.group === v) await updateBook(b, { group: '' });
+    if (S.grp === v) { S.grp = ''; LS.set('sz.grp', ''); }
+  }
+  renderLibrary();
+}
+
+function bookCard(b) {
+  const p = effProg(b), st = statusOf(b);
+  const card = el('div', 'card' + (st !== 'reading' ? ' st-' + st : ''));
+  const open = el('button', 'card-open'); open.setAttribute('aria-label', '打开 ' + b.title);
+  const cover = el('div', 'cover'); cover.style.setProperty('--c', colorFor(b.title));
+  if (goodCover(b.cover)) { const im = el('img', 'cimg'); im.alt = ''; im.loading = 'lazy'; im.src = b.cover; cover.classList.add('has-img'); cover.append(im, el('span', 'fmt', FMT_LABEL[b.fmt] || b.fmt)); }
+  else cover.append(el('span', 'label', b.title), el('span', 'fmt', FMT_LABEL[b.fmt] || b.fmt));
+  if (b.needFile) cover.append(el('span', 'saved', '待上传'));
+  else if (S.cached.has(cacheKey(b))) cover.append(el('span', 'saved', '已存本机'));
+  open.append(cover);
+  if (S.sel) {
+    card.classList.add('selmode'); if (S.sel.has(b.id)) card.classList.add('sel');
+    cover.append(el('span', 'tick', '✓'));
+    open.onclick = () => { S.sel.has(b.id) ? S.sel.delete(b.id) : S.sel.add(b.id); renderLibrary(); };
+  } else open.onclick = () => openBook(b.id);
+  const more = el('button', 'more', '⋯'); more.setAttribute('aria-label', '更多操作'); more.onclick = e => { e.stopPropagation(); bookMenu(b); };
+  const meta = el('div', 'meta');
+  const bar = el('div', 'bar'); const i = el('i'); i.style.width = (st === 'done' ? 100 : p ? Math.round(p.pct * 100) : 0) + '%'; bar.append(i);
+  meta.append(bar, el('span', '', st === 'reading' ? progLabel(b, p) : STATUS[st]));
+  card.append(open); if (!S.sel) card.append(more); card.append(el('div', 't', b.title), meta);
+  return card;
+}
+function renderChips() {
+  const box = $('#chips'); box.textContent = '';
+  const gs = allGroups(); const all = [...S.books.values()];
+  if (S.grp && S.grp !== '__none' && !gs.includes(S.grp)) { S.grp = ''; LS.set('sz.grp', ''); }
+  const chip = (label, val, n) => {
+    const c = el('button', 'chip' + (S.grp === val ? ' on' : '')); c.append(label, el('small', '', String(n)));
+    c.onclick = () => { if (S.grp !== val) S.animGrid = true; S.grp = val; LS.set('sz.grp', val); renderLibrary(); }; box.append(c);
+  };
+  chip('全部', '', all.length);
+  for (const g of gs) chip(g, g, all.filter(b => b.group === g).length);
+  const none = all.filter(b => !b.group).length;
+  if (gs.length && none) chip('未分组', '__none', none);
+  if (S.grp && S.grp !== '__none' && !S.sel) { const ab = el('button', 'chip add', '＋ 加书'); ab.onclick = () => addToGroup(S.grp); box.append(ab); }
+  const add = el('button', 'chip add', gs.length ? '管理分组' : '＋ 分组'); add.onclick = manageGroups; box.append(add);
+  if (all.length) { const sb = el('button', 'chip' + (S.sel ? ' on' : ''), S.sel ? '取消选择' : '选择'); sb.onclick = () => setSelect(!S.sel); box.append(sb); }
+}
+function renderLibrary() {
+  renderChips(); renderSelBar();
+  const animNow = S.animGrid && !reduceMotion(); S.animGrid = false; let cardI = 0;
+  const grid = $('#grid'); grid.textContent = '';
+  const all = [...S.books.values()];
+  const list = all.filter(b => S.grp === '' ? true : S.grp === '__none' ? !b.group : b.group === S.grp).sort((a, b) => lastTouch(b) - lastTouch(a));
+  $('#empty').hidden = all.length > 0;
+  const resume = $('#resume');
+  const last = list.find(b => statusOf(b) === 'reading' && effProg(b) && effProg(b).pct < 0.995);
+  if (last && !S.sel) {
+    const p = effProg(last);
+    resume.hidden = false; resume.textContent = '';
+    const mini = el('span', 'mini'); mini.style.setProperty('--c', colorFor(last.title));
+    if (goodCover(last.cover)) { const im = el('img'); im.alt = ''; im.src = last.cover; mini.append(im); }
+    const mid = el('span'); mid.style.minWidth = '0';
+    mid.append(el('b', '', last.title), el('small', '', (p.label ? p.label + '，' : '') + progLabel(last, p) + (totalTime(last) >= 60 ? '，读了 ' + fmtDur(totalTime(last)) : '')));
+    resume.append(mini, mid, el('span', 'go', '继续读'));
+    resume.onclick = () => openBook(last.id);
+    if (animNow) replay(resume, 'anim');
+  } else resume.hidden = true;
+  if (all.length && !list.length) { grid.append(el('p', 'sec-empty', '这个分组还没有书。点书本右上角的「⋯」，选「分组」就能放进来；在这个分组里上传的新书也会自动放进来。')); return; }
+  const secs = [['reading', list.filter(b => statusOf(b) === 'reading')], ['dropped', list.filter(b => statusOf(b) === 'dropped')], ['done', list.filter(b => statusOf(b) === 'done')]];
+  const multi = secs.filter(x => x[1].length).length > 1;
+  for (const [st, books] of secs) {
+    if (!books.length) continue;
+    if (multi) grid.append(el('h2', 'sec-h', STATUS[st] + '　' + books.length));
+    const g = el('div', 'grid' + (animNow ? ' anim' : '')); for (const b of books) { const cd = bookCard(b); cd.style.setProperty('--i', Math.min(cardI++, 18)); g.append(cd); } grid.append(g);
+  }
+}
+async function bookMenu(b) {
+  const saved = S.cached.has(cacheKey(b));
+  const p = effProg(b), st = statusOf(b);
+  const info = [FMT_LABEL[b.fmt], b.size ? fmtSize(b.size) : '', b.group ? '分组：' + b.group : '', p && p.devName ? '最后在 ' + p.devName + ' 上读' : '', totalTime(b) >= 60 ? '一共读了 ' + fmtDur(totalTime(b)) : ''].filter(Boolean).join('，');
+  const acts = [];
+  if (st !== 'done') acts.push({ label: '标记为已读', v: 'st:done' });
+  if (st !== 'dropped') acts.push({ label: '标记为读不下', v: 'st:dropped' });
+  if (st !== 'reading') acts.push({ label: '放回在读', v: 'st:reading' });
+  acts.push({ label: '分组' + (b.group ? '（' + b.group + '）' : '') + '…', v: 'group' });
+  if (!saved && b.asset) acts.push({ label: '存到这台设备（离线可读）', v: 'save' });
+  acts.push({ label: '用新文件替换（保留进度和划线）', v: 'replace' });
+  acts.push({ label: '从头开始读', v: 'restart' });
+  acts.push({ label: '删除这本书', v: 'del', cls: 'danger' }, { label: '取消', v: null });
+  const v = await modal(b.title, info, acts);
+  if (v && v.startsWith('st:')) { updateBook(b, { status: v.slice(3) }); busy('已移到「' + STATUS[v.slice(3)] + '」', 1600); }
+  if (v === 'group') pickGroup(b);
+  if (v === 'replace') replaceBook(b);
+  if (v === 'save') { busy('正在下载《' + b.title + '》…'); const ok = await ensureCached(b); busy(ok ? '已存到本机' : '下载失败，检查网络后再试', 2500); renderLibrary(); }
+  if (v === 'restart') { saveProg(b.id, { ch: 0, off: 0, pct: 0, label: '' }); renderLibrary(); }
+  if (v === 'del') {
+    const ok = await modal('删除《' + b.title + '》？', b.localOnly ? '书会从这台设备删除。' : '书和阅读进度会从所有设备删除，不能恢复。', [{ label: '删除', v: 1, cls: 'danger' }, { label: '取消', v: 0 }]);
+    if (ok) deleteBook(b);
+  }
+}
+async function deleteBook(b) {
+  busy('正在删除…');
+  try {
+    if (b.localOnly) LS.set('sz.local', LS.get('sz.local', []).filter(x => x.id !== b.id));
+    else {
+      if (!S.db) throw new Error('现在没连上同步服务，联网后再删除');
+      await S.db.doc(docPath(b.id)).delete();
+      if (b.asset && S.assets) { for (const id of (Array.isArray(b.parts) ? b.parts : [b.asset])) { try { await S.assets.delete(id); } catch (e) {} } }
+      S.remote = S.remote.filter(x => x.id !== b.id); LS.set('sz.lib', S.remote);
+    }
+    if (S.db && !b.localOnly) { try { await S.db.doc('data/users/' + S.uid + '/hl_' + b.id).delete(); } catch (e) {} }
+    await idb.del(cacheKey(b)); LS.del('sz.p.' + b.id); LS.del('sz.hl.' + b.id); delete S.hl[b.id];
+    rebuildBooks(); await refreshCached(); renderLibrary(); busy('已删除', 1800);
+  } catch (e) { busy(e.message || '删除失败', 3500); }
+}
+$('#libMore').onclick = async () => {
+  const missing = [...S.books.values()].filter(b => b.asset && !S.cached.has(cacheKey(b)));
+  const v = await modal('书架', (missing.length ? '有 ' + missing.length + ' 本书还没存到这台设备。' : '所有书都已经存在这台设备上，可以离线阅读。') + (S.email ? ' 登入账号：' + S.email + '。' : '') + ' 备份文件里有书架、进度、划线和设置，不含书本文件。',
+    [missing.length ? { label: '全部存到这台设备', v: 'all' } : null, S.db ? { label: '导出备份文件', v: 'bk' } : null, S.db ? { label: '导入备份文件', v: 'rs' } : null, S.db ? { label: '登出', v: 'out', cls: 'danger' } : null, { label: '关闭', v: null }].filter(Boolean));
+  if (v === 'bk') { exportAll(); return; }
+  if (v === 'rs') { importAll(); return; }
+  if (v === 'out') { const ok = await modal('登出？', '这台设备上暂存的书和资料会清掉，云端的不受影响。', [{ label: '登出', v: 1, cls: 'danger' }, { label: '取消', v: 0 }]); if (ok) signOut(); return; }
+  if (v === 'all') {
+    let n = 0;
+    for (const b of missing) { busy('正在下载 ' + (++n) + '/' + missing.length + '：《' + b.title + '》'); await ensureCached(b); }
+    renderLibrary(); busy('下载完成', 2000);
+  }
+};
+
+/* ---------------- backup file: export / import ---------------- */
+function todayStr() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function autoDrive() {}
+async function exportAll() {
+  if (!S.db || !S.allDocs) { busy('还在同步，等一下再试', 2000); return; }
+  const json = JSON.stringify({ app: '书斋', version: 1, exportedAt: new Date().toISOString(), docs: S.allDocs });
+  const name = '书斋备份-' + todayStr() + '.json';
+  const file = new File([json], name, { type: 'application/json' });
+  try { if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: name }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+  const u = URL.createObjectURL(file); const a = document.createElement('a'); a.href = u; a.download = name; document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(u), 4000); busy('已导出', 1800);
+}
+async function importAll() {
+  if (!S.db) { busy('先登入再导入', 2000); return; }
+  const f = await pickFile(); if (!f) return;
+  try {
+    busy('正在导入…');
+    const data = JSON.parse(await f.text());
+    if (!data || data.app !== '书斋' || !Array.isArray(data.docs)) throw new Error('bad');
+    const now = Date.now(); let books = 0, waiting = 0;
+    for (const d of data.docs) {
+      if (!d || !d.id || !d.data) continue;
+      const v = Object.assign({}, d.data);
+      if (d.id.startsWith('book_')) {
+        books++;
+        const have = S.books.get(d.id.slice(5));
+        if (have && have.asset && !have.needFile) { v.asset = have.asset; v.parts = have.parts || null; v.b64 = !!have.b64; v.needFile = false; }
+        else { v.asset = null; v.parts = null; v.b64 = false; v.needFile = true; waiting++; }
+      }
+      if (d.id.startsWith('hl_')) { v.at = now; LS.del('sz.hl.' + d.id.slice(3)); }
+      if (d.id.startsWith('set_')) v.at = now;
+      await S.db.doc('data/users/' + S.uid + '/' + d.id).set(v);
+    }
+    busy(null);
+    await modal('导入完成', '导入了 ' + books + ' 本书的书架资料、进度和划线。' + (waiting ? '其中 ' + waiting + ' 本还要上传书本文件：直接按「添加书籍」选同一个文件就行，书名一样的会自动接回进度和划线。' : ''), [{ label: '知道了', v: 1 }]);
+  } catch (e) { busy('这个文件不是书斋备份', 3000); }
+}
+
+/* ---------------- book recommendations ---------------- */
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); return true; } catch (e) {}
+  try { const ta = document.createElement('textarea'); ta.value = t; ta.style.cssText = 'position:fixed;opacity:0'; document.body.append(ta); ta.select(); const ok = document.execCommand('copy'); ta.remove(); return ok; } catch (e) { return false; }
+}
+let recCtl = null;
+function recPrompt(exclude) {
+  const books = [...S.books.values()].sort((a, b) => lastTouch(b) - lastTouch(a)).slice(0, 80);
+  const shelf = books.map(b => { const p = effProg(b); return '- 《' + b.title + '》' + (b.author ? ' 作者：' + b.author : '') + (b.lang === 'en' ? '（英文）' : '') + '，' + progLabel(b, p); }).join('\n');
+  return '你是一个很懂中文网络小说、出版小说和英文书的选书顾问。下面是一位读者书架上的书和阅读状态（读得越多越能代表口味，「已读完」最重要）。\n'
+    + '请根据他的口味推荐 6 本他书架上没有的书。\n要求：\n'
+    + '- 大部分推荐中文书（网文或出版书都可以）；书架上有英文书的话，可以推荐 1 到 2 本英文书。\n'
+    + '- 只推荐真实存在、你很有把握的书，书名和作者必须准确；没把握的不要写。\n'
+    + '- 不要推荐书架上已有的书' + (exclude.length ? '，也不要推荐「已经推荐过」里的书' : '') + '。\n'
+    + '- 推荐理由用简体中文，一到两句，具体说出跟他书架上哪一本像、或为什么适合他。\n'
+    + '只输出 JSON 数组，不要任何其他文字。格式：[{"title":"书名（不要书名号）","author":"作者","tag":"类型，例如 历史穿越","reason":"推荐理由"}]\n\n'
+    + '书架：\n' + (shelf || '（书架是空的）') + (exclude.length ? '\n\n已经推荐过：\n' + exclude.map(t => '- ' + t).join('\n') : '');
+}
+async function openRecs() {
+  if (!S.sample) return;
+  const scrim = el('div', 'scrim'); const m = el('div', 'modal'); m.setAttribute('role', 'dialog');
+  const status = el('div', 'rec-status'); const list = el('div', 'recs');
+  const more = el('button', 'btn primary', '换一批'); const copyAll = el('button', 'btn', '复制全部书名'); const close = el('button', 'btn', '关闭');
+  m.append(el('h3', '', '你可能会喜欢'), status, list, more, copyAll, close);
+  scrim.append(m); document.body.append(scrim);
+  const done = () => { if (recCtl) recCtl.abort(); closeScrim(scrim); };
+  close.onclick = done; scrim.onclick = e => { if (e.target === scrim) done(); };
+  const draw = (recs) => {
+    list.textContent = '';
+    for (const r of recs) {
+      const c = el('div', 'rec');
+      c.append(el('b', '', '《' + r.title + '》'), el('div', 'm2', [r.author, r.tag].filter(Boolean).join('　')), el('p', '', r.reason || ''));
+      const cp = el('button', 'cp', '复制书名');
+      cp.onclick = async () => { const ok = await copyText(r.title); cp.textContent = ok ? '已复制' : '复制失败'; cp.classList.toggle('done', ok); setTimeout(() => { cp.textContent = '复制书名'; cp.classList.remove('done'); }, 1800); };
+      c.append(cp); list.append(c);
+    }
+    copyAll.hidden = !recs.length;
+  };
+  copyAll.onclick = async () => { const recs = LS.get('sz.recs', []); const ok = await copyText(recs.map(r => r.title).join('\n')); copyAll.textContent = ok ? '已复制全部书名' : '复制失败'; setTimeout(() => { copyAll.textContent = '复制全部书名'; }, 1800); };
+  const fetchRecs = async (fresh) => {
+    more.disabled = true; list.textContent = ''; copyAll.hidden = true;
+    status.textContent = '正在翻你的书架，想想推荐什么…（大概半分钟）';
+    const exclude = fresh ? LS.get('sz.recSeen', []) : [];
+    recCtl = new AbortController();
+    try {
+      const data = await S.sample.json(recPrompt(exclude.slice(-60)), { signal: recCtl.signal, modelTier: 'default', cache: !fresh });
+      const recs = (Array.isArray(data) ? data : []).filter(r => r && typeof r.title === 'string' && r.title.trim())
+        .map(r => ({ title: String(r.title).replace(/[《》]/g, '').trim().slice(0, 80), author: String(r.author || '').slice(0, 60), tag: String(r.tag || '').slice(0, 30), reason: String(r.reason || '').slice(0, 300) }));
+      if (!recs.length) throw { code: 'empty' };
+      LS.set('sz.recs', recs); LS.set('sz.recSeen', exclude.concat(recs.map(r => r.title)).slice(-120));
+      status.textContent = '根据你书架上的 ' + S.books.size + ' 本书挑的。书名可能有出入，搜之前可以核对一下作者。';
+      draw(recs);
+    } catch (e) {
+      const code = e && e.code;
+      if (code === 'cancelled') return;
+      status.textContent = code === 'not_granted' ? '你没有允许书斋使用 Claude，所以推荐不了。重新打开书斋，再按一次「荐书」并选择允许就可以。'
+        : code === 'rate_limited' ? '问得太频繁了，等一两分钟再按「换一批」。'
+        : code === 'empty' ? '这次没拿到推荐，按「换一批」再试一次。'
+        : '推荐失败了，等一下再试。' + (e && e.message ? '（' + e.message + '）' : '');
+    } finally { more.disabled = false; recCtl = null; }
+  };
+  more.onclick = () => fetchRecs(true);
+  const last = LS.get('sz.recs', []);
+  if (last.length) { status.textContent = '上次的推荐。想要新的就按「换一批」。'; draw(last); } else fetchRecs(false);
+}
+$('#recBtn').onclick = openRecs;
+
+/* ---------------- text decoding & parsing ---------------- */
+function decodeText(buf) {
+  const u8 = new Uint8Array(buf);
+  if (u8[0] === 0xFF && u8[1] === 0xFE) return new TextDecoder('utf-16le').decode(u8);
+  if (u8[0] === 0xFE && u8[1] === 0xFF) return new TextDecoder('utf-16be').decode(u8);
+  try { return new TextDecoder('utf-8', { fatal: true }).decode(u8); } catch (e) {}
+  let s = new TextDecoder('gb18030').decode(u8);
+  if ((s.match(/\uFFFD/g) || []).length > 20) { try { const b5 = new TextDecoder('big5').decode(u8); if ((b5.match(/\uFFFD/g) || []).length < (s.match(/\uFFFD/g) || []).length) s = b5; } catch (e) {} }
+  return s;
+}
+function detectLang(s) {
+  const sample = s.slice(0, 8000);
+  const cjk = (sample.match(/[\u3400-\u9fff]/g) || []).length;
+  const lat = (sample.match(/[A-Za-z]/g) || []).length;
+  return cjk > lat * 0.15 ? 'zh' : 'en';
+}
+const HEAD_RE = /^[ \t\u3000]*(?:(?:正文[ \t\u3000]*)?第[0-9０-９零〇一二两三四五六七八九十百千万]+[章节回卷集部篇幕](?:[ \t\u3000:：、.．\-—_].{0,40}|.{0,40})?|序章|序言|序|楔子|引子|前言|尾声|后记|终章|完本感言|番外(?:[ \t\u3000:：、.．\-—_之一二三四五六七八九十0-9].{0,30})?|(?:Chapter|CHAPTER)[ \t]+[0-9IVXLCivxlc]+\b.{0,60}|Prologue|Epilogue|PROLOGUE|EPILOGUE)[ \t\u3000]*$/;
+function splitText(text) {
+  const lines = text.split('\n');
+  const out = []; let cur = { t: '', lines: [], first: true };
+  const hasBody = c => c.lines.some(l => l.trim());
+  for (const line of lines) {
+    if (line.length <= 60 && HEAD_RE.test(line)) {
+      if (hasBody(cur)) out.push(cur);
+      cur = { t: line.trim(), lines: [] };
+    } else cur.lines.push(line);
+  }
+  if (hasBody(cur)) out.push(cur);
+  let chapters = out.map((c, i) => ({ t: c.t || (i === 0 ? '开篇' : '第 ' + (i + 1) + ' 节'), body: c.lines.join('\n') }));
+  if (chapters.length < 2) {
+    chapters = []; let buf = [], len = 0;
+    const push = () => { if (buf.length) { chapters.push({ t: '第 ' + (chapters.length + 1) + ' 节', body: buf.join('\n') }); buf = []; len = 0; } };
+    for (const l of lines) { buf.push(l); len += l.length; if (len > 9000) push(); }
+    push();
+  }
+  return chapters;
+}
+
+/* sanitizer: rebuilds a safe subset of HTML */
+const KEEP = new Set('p div h1 h2 h3 h4 h5 h6 br hr em i strong b u s sub sup blockquote ul ol li pre code table thead tbody tr td th figure figcaption ruby rt rp small section center'.split(' '));
+const DROP = new Set('script style head title meta link iframe object embed noscript template form input button select textarea audio video canvas math'.split(' '));
+const outDoc = document.implementation.createHTMLDocument('');
+function cleanInto(node, out) {
+  for (const c of node.childNodes) {
+    if (c.nodeType === 3) { out.appendChild(outDoc.createTextNode(c.nodeValue)); continue; }
+    if (c.nodeType !== 1) continue;
+    const tag = (c.localName || '').toLowerCase();
+    if (DROP.has(tag)) continue;
+    if (tag === 'img' || tag === 'image') {
+      const src = c.getAttribute('data-src');
+      if (src && /^data:image\/(png|jpe?g|gif|webp);base64,/.test(src)) { const im = outDoc.createElement('img'); im.setAttribute('src', src); im.setAttribute('alt', ''); out.appendChild(im); }
+      continue;
+    }
+    if (tag === 'svg') { for (const im of c.getElementsByTagNameNS('*', 'image')) cleanInto({ childNodes: [im] }, out); continue; }
+    if (KEEP.has(tag)) { const e = outDoc.createElement(tag === 'section' || tag === 'center' ? 'div' : tag); cleanInto(c, e); out.appendChild(e); }
+    else cleanInto(c, out);
+  }
+}
+function cleanToContainer(root) { const box = outDoc.createElement('div'); cleanInto(root, box); return box; }
+function htmlToSafeFragment(html) {
+  const d = new DOMParser().parseFromString('<body>' + html + '</body>', 'text/html');
+  d.querySelectorAll('img').forEach(i => i.setAttribute('data-src', i.getAttribute('src') || ''));
+  const box = cleanToContainer(d.body);
+  const frag = document.createDocumentFragment();
+  while (box.firstChild) frag.appendChild(document.importNode(box.firstChild, true)), box.removeChild(box.firstChild);
+  return frag;
+}
+function splitHtmlChapters(box) {
+  const nodes = [...box.childNodes];
+  const lvl = ['h1', 'h2'].find(h => box.querySelector(':scope > ' + h)) || (box.querySelector(':scope > h3') ? 'h3' : null);
+  const chapters = []; let cur = { t: '', nodes: [] }, len = 0;
+  const push = () => { if (cur.nodes.length) { const w = outDoc.createElement('div'); cur.nodes.forEach(n => w.appendChild(n)); if (w.textContent.trim() || w.querySelector('img')) chapters.push({ t: cur.t || '第 ' + (chapters.length + 1) + ' 节', h: w.innerHTML }); } cur = { t: '', nodes: [] }; len = 0; };
+  for (const n of nodes) {
+    const tag = n.nodeType === 1 ? n.localName : '';
+    if (lvl && tag === lvl) { push(); cur.t = n.textContent.trim().slice(0, 60); }
+    else if (!lvl && len > 9000) push();
+    cur.nodes.push(n); len += (n.textContent || '').length;
+  }
+  push();
+  return chapters;
+}
+
+async function blobToDataUrl(u8, mime) {
+  return new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => res(''); r.readAsDataURL(new Blob([u8], { type: mime })); });
+}
+function resolvePath(dir, href) {
+  let h = href.split('#')[0]; try { h = decodeURIComponent(h); } catch (e) {}
+  const parts = (h.startsWith('/') ? h.slice(1) : dir + h).split('/'); const out = [];
+  for (const p of parts) { if (p === '..') out.pop(); else if (p && p !== '.') out.push(p); }
+  return out.join('/');
+}
+const byTag = (doc, n) => [...doc.getElementsByTagNameNS('*', n)];
+function parseMarkup(str) {
+  let d = new DOMParser().parseFromString(str, 'application/xhtml+xml');
+  if (d.getElementsByTagName('parsererror').length) d = new DOMParser().parseFromString(str, 'text/html');
+  return d;
+}
+async function parseEpub(file) {
+  await loadScript(LIB.jszip);
+  const zip = await window.JSZip.loadAsync(await file.arrayBuffer());
+  const cont = zip.file('META-INF/container.xml'); if (!cont) throw new Error('这个 EPUB 文件结构不完整');
+  const cdoc = new DOMParser().parseFromString(await cont.async('string'), 'application/xml');
+  const opfPath = byTag(cdoc, 'rootfile')[0]?.getAttribute('full-path'); if (!opfPath || !zip.file(opfPath)) throw new Error('这个 EPUB 文件找不到目录信息');
+  const opf = new DOMParser().parseFromString(await zip.file(opfPath).async('string'), 'application/xml');
+  const base = opfPath.includes('/') ? opfPath.replace(/[^/]*$/, '') : '';
+  const title = byTag(opf, 'title')[0]?.textContent.trim() || '';
+  const author = byTag(opf, 'creator')[0]?.textContent.trim() || '';
+  const manifest = {};
+  for (const it of byTag(opf, 'item')) manifest[it.getAttribute('id')] = { path: resolvePath(base, it.getAttribute('href') || ''), type: it.getAttribute('media-type') || '', props: it.getAttribute('properties') || '' };
+  let coverUrl = null;
+  try {
+    const metaCover = byTag(opf, 'meta').find(m => m.getAttribute('name') === 'cover');
+    const ci = Object.values(manifest).find(m => /\bcover-image\b/.test(m.props))
+      || (metaCover && manifest[metaCover.getAttribute('content')])
+      || Object.entries(manifest).map(([k, m]) => Object.assign({ k }, m)).find(m => /cover/i.test(m.k + m.path) && /^image\//.test(m.type));
+    if (ci && /^image\/(jpeg|png|gif|webp)/.test(ci.type) && zip.file(ci.path)) coverUrl = await makeThumb(await blobToDataUrl(await zip.file(ci.path).async('uint8array'), ci.type));
+  } catch (e) {}
+  const spine = byTag(opf, 'itemref').map(r => manifest[r.getAttribute('idref')]).filter(Boolean);
+  // titles from nav or ncx
+  const tocMap = {};
+  try {
+    const nav = Object.values(manifest).find(m => /\bnav\b/.test(m.props));
+    if (nav && zip.file(nav.path)) {
+      const nd = parseMarkup(await zip.file(nav.path).async('string')); const dir = nav.path.replace(/[^/]*$/, '');
+      for (const a of byTag(nd, 'a')) { const p = resolvePath(dir, a.getAttribute('href') || ''); if (p && !tocMap[p]) tocMap[p] = a.textContent.trim(); }
+    }
+    const ncx = Object.values(manifest).find(m => m.type === 'application/x-dtbncx+xml');
+    if (ncx && zip.file(ncx.path)) {
+      const nd = new DOMParser().parseFromString(await zip.file(ncx.path).async('string'), 'application/xml'); const dir = ncx.path.replace(/[^/]*$/, '');
+      for (const np of byTag(nd, 'navPoint')) {
+        const src = byTag(np, 'content')[0]?.getAttribute('src'); const label = byTag(np, 'text')[0]?.textContent.trim();
+        const p = src && resolvePath(dir, src); if (p && label && !tocMap[p]) tocMap[p] = label;
+      }
+    }
+  } catch (e) {}
+  let imgBudget = 40 * 1024 * 1024;
+  const chapters = [];
+  for (let i = 0; i < spine.length; i++) {
+    const it = spine[i]; const f = zip.file(it.path); if (!f || !/html|xml/.test(it.type || 'html')) continue;
+    const doc = parseMarkup(await f.async('string')); const body = byTag(doc, 'body')[0]; if (!body) continue;
+    const dir = it.path.replace(/[^/]*$/, '');
+    for (const im of [...byTag(body, 'img'), ...byTag(body, 'image')]) {
+      const href = im.getAttribute('src') || im.getAttribute('href') || im.getAttributeNS('http://www.w3.org/1999/xlink', 'href') || '';
+      const ip = resolvePath(dir, href); const zf = zip.file(ip); if (!zf) continue;
+      const ext = ip.split('.').pop().toLowerCase(); const mime = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif', webp: 'image/webp' }[ext]; if (!mime) continue;
+      const u8 = await zf.async('uint8array');
+      let url = await blobToDataUrl(u8, mime);
+      if (u8.length > 300 * 1024) { const sm = await shrinkImg(url); if (sm && sm.length < url.length) url = sm; }
+      if (url.length > imgBudget) continue;
+      imgBudget -= url.length; im.setAttribute('data-src', url);
+    }
+    const box = cleanToContainer(body);
+    const txt = box.textContent.trim();
+    if (!txt && !box.querySelector('img')) continue;
+    const h = box.querySelector('h1,h2,h3');
+    const t = tocMap[it.path] || (h && h.textContent.trim().slice(0, 60)) || (chapters.length === 0 && !txt ? '封面' : '第 ' + (chapters.length + 1) + ' 节');
+    chapters.push({ t, h: box.innerHTML });
+  }
+  if (!chapters.length) throw new Error('没能从这个 EPUB 里读出正文');
+  const all = chapters.map(c => c.h.replace(/<[^>]+>/g, '')).join('').slice(0, 8000);
+  if (!coverUrl) { const m = chapters.slice(0, 3).map(c => /<img[^>]+src="(data:image\/[^"]+)"/.exec(c.h)).find(Boolean); if (m) coverUrl = await makeThumb(m[1]); }
+  return { title, author, lang: detectLang(all), chapters, cover: coverUrl };
+}
+async function parseDocxOrHtml(file, ext) {
+  let html;
+  if (ext === 'docx') {
+    await loadScript(LIB.mammoth);
+    html = (await window.mammoth.convertToHtml({ arrayBuffer: await file.arrayBuffer() })).value;
+  } else html = decodeText(await file.arrayBuffer());
+  const d = new DOMParser().parseFromString(html, 'text/html');
+  d.querySelectorAll('img').forEach(i => i.setAttribute('data-src', i.getAttribute('src') || ''));
+  const box = cleanToContainer(d.body);
+  const chapters = splitHtmlChapters(box);
+  if (!chapters.length) throw new Error('这个文件里没有找到文字');
+  return { title: (d.title || '').trim(), author: '', lang: detectLang(box.textContent), chapters };
+}
+
+const MAX = 300 * 1024 * 1024;   /* big books are split into several cloud parts */
+const PART = 15 * 1024 * 1024;
+function shrinkImg(src) {
+  return new Promise(res => {
+    const im = new Image();
+    im.onload = () => {
+      try {
+        const k = Math.min(1, 1200 / im.naturalWidth), w = Math.round(im.naturalWidth * k), h = Math.round(im.naturalHeight * k);
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); g.drawImage(im, 0, 0, w, h);
+        res(c.toDataURL('image/jpeg', 0.8));
+      } catch (e) { res(null); }
+    };
+    im.onerror = () => res(null); im.src = src;
+  });
+}
+function bufToB64(buf) { return new Promise(res => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1] || ''); r.onerror = () => res(''); r.readAsDataURL(new Blob([buf])); }); }
+function b64ToBuf(s) { const bin = atob(s); const u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i); return u8.buffer; }
+async function uploadBook(r, title) {
+  if (r.blob.size <= PART) return { asset: (await S.assets.upload(r.blob, { type: r.mime })).id };
+  const b64 = r.kind === 'pdf';
+  const str = b64 ? await bufToB64(r.cache) : r.cache;
+  const step = b64 ? PART : 4 * 1024 * 1024;   /* 4M chars of Chinese ≈ 12 MB */
+  const n = Math.ceil(str.length / step), ids = [];
+  try {
+    for (let i = 0; i < n; i++) {
+      busy('正在上传《' + title + '》第 ' + (i + 1) + '/' + n + ' 部分…');
+      ids.push((await S.assets.upload(new Blob([str.slice(i * step, (i + 1) * step)], { type: 'text/plain' }), { type: 'text/plain' })).id);
+    }
+  } catch (e) { for (const id of ids) { try { await S.assets.delete(id); } catch (x) {} } throw e; }
+  return { asset: ids[0], parts: ids, b64 };
+}
+async function parseFile(f) {
+  const ext = (f.name.split('.').pop() || '').toLowerCase();
+  const base = f.name.replace(/\.[^.]+$/, '').replace(/_/g, ' ').trim();
+  if (['mobi', 'azw', 'azw3', 'kf8', 'prc', 'kfx'].includes(ext)) throw new Error('MOBI/AZW3 是 Kindle 格式，请先用 Calibre 转成 EPUB 再上传');
+  if (ext === 'pdf') {
+    if (f.size > MAX) throw new Error('PDF 超过 300 MB，太大了');
+    const buf = await f.arrayBuffer();
+    let pages = 0, title = '', cover = null;
+    try { const lib = await loadPdfJs(); const doc = await lib.getDocument({ data: new Uint8Array(buf.slice(0)) }).promise; pages = doc.numPages; try { title = ((await doc.getMetadata()).info.Title || '').trim(); } catch (e) {}
+      try { const pg = await doc.getPage(1); const vp = pg.getViewport({ scale: 240 / pg.getViewport({ scale: 1 }).width }); const c = document.createElement('canvas'); c.width = Math.floor(vp.width); c.height = Math.floor(vp.height); await pg.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise; cover = c.toDataURL('image/jpeg', 0.72); } catch (e) {}
+      doc.destroy(); }
+    catch (e) { throw new Error('打不开这个 PDF（可能加密了或文件损坏）'); }
+    return { fmt: 'pdf', kind: 'pdf', title: base || title, author: '', lang: 'zh', count: pages, mime: 'application/pdf', blob: f, cache: buf, cover };
+  }
+  if (ext === 'epub' || ext === 'docx' || ['html', 'htm', 'xhtml'].includes(ext)) {
+    const r = ext === 'epub' ? await parseEpub(f) : await parseDocxOrHtml(f, ext);
+    const json = JSON.stringify({ v: 1, title: r.title, author: r.author, chapters: r.chapters });
+    const blob = new Blob([json], { type: 'application/json' });
+    if (blob.size > MAX) throw new Error('这本书解析后超过 300 MB，太大了');
+    return { fmt: ext === 'epub' ? 'epub' : ext === 'docx' ? 'docx' : 'html', kind: 'json', title: r.title || base, author: r.author, lang: r.lang, count: r.chapters.length, mime: 'application/json', blob, cache: json, cover: r.cover || null };
+  }
+  // treat everything else as text
+  const text = decodeText(await f.arrayBuffer()).replace(/\r\n?/g, '\n').replace(/\u0000/g, '');
+  if ((text.match(/\uFFFD/g) || []).length > text.length * 0.05) throw new Error('看不懂这个文件的格式。支持 TXT、EPUB、PDF、DOCX、HTML、Markdown');
+  const blob = new Blob([text], { type: 'text/plain' });
+  if (blob.size > MAX) throw new Error('这本书超过 300 MB，太大了');
+  return { fmt: ext === 'md' || ext === 'markdown' ? 'md' : 'txt', kind: 'text', title: base, author: '', lang: detectLang(text), count: splitText(text).length, mime: 'text/plain', blob, cache: text };
+}
+
+/* ---------------- import ---------------- */
+async function importFiles(files) {
+  let ok = 0;
+  for (const f of files) {
+    try {
+      busy('正在解析《' + f.name + '》…');
+      const r = await parseFile(f);
+      const norm = t => String(t || '').replace(/\s+/g, '').toLowerCase();
+      const waitingBook = [...S.books.values()].find(x => x.needFile && x.kind === r.kind && norm(x.title) === norm(r.title.slice(0, 120)));
+      if (waitingBook) { busy(null); await replaceBook(waitingBook, f, r); ok++; continue; }
+      const id = newId();
+      const row = { title: r.title.slice(0, 120), author: r.author.slice(0, 80), fmt: r.fmt, kind: r.kind, size: r.blob.size, lang: r.lang, count: r.count, addedAt: Date.now(), progress: null, asset: null, cover: r.cover || null, status: 'reading', group: S.grp && S.grp !== '__none' ? S.grp : '' };
+      if (S.db && S.assets) {
+        busy('正在上传《' + row.title + '》（' + fmtSize(r.blob.size) + '）…');
+        let up;
+        try { up = await uploadBook(r, row.title); }
+        catch (e) {
+          if (e && e.code === 'too_large') throw new Error('文件太大，上传失败');
+          if (e && e.code === 'quota_or_state') throw new Error('云端空间满了，删掉几本不读的书再试');
+          throw new Error('上传失败，检查网络后再试');
+        }
+        row.asset = up.asset; if (up.parts) { row.parts = up.parts; row.b64 = up.b64; }
+        await idb.put(up.asset, r.cache);
+        await S.db.doc(docPath(id)).set(row);
+        S.remote = S.remote.filter(x => x.id !== id).concat([Object.assign({ id }, row)]); LS.set('sz.lib', S.remote);
+      } else {
+        await idb.put('local:' + id, r.cache);
+        LS.set('sz.local', LS.get('sz.local', []).concat([Object.assign({ id }, row)]));
+      }
+      ok++;
+    } catch (e) {
+      busy(null);
+      await modal('《' + f.name + '》没有加进书架', e.message || String(e), [{ label: '知道了', v: 1 }]);
+    }
+  }
+  rebuildBooks(); await refreshCached(); renderLibrary();
+  if (ok) busy(ok === 1 ? '已加入书架' : '已加入 ' + ok + ' 本书', 2200); else busy(null);
+}
+const fileIn = $('#fileIn');
+$('#addBtn').onclick = $('#addBtn2').onclick = () => fileIn.click();
+fileIn.onchange = () => { const fs = [...fileIn.files]; fileIn.value = ''; if (fs.length) importFiles(fs); };
+
+async function ensureCached(b) {
+  const k = cacheKey(b);
+  let data = await idb.get(k);
+  if (data) return data;
+  if (!b.asset || b.needFile) return null;
+  try {
+    if (Array.isArray(b.parts) && b.parts.length > 1) {
+      const txt = [];
+      for (const id of b.parts) { const r = await blobFetch(id); if (!r.ok) throw new Error(); txt.push(await r.text()); }
+      data = b.b64 ? b64ToBuf(txt.join('')) : txt.join('');
+    } else {
+      const r = await blobFetch(b.asset); if (!r.ok) throw new Error();
+      data = b.kind === 'pdf' ? await r.arrayBuffer() : await r.text();
+    }
+    await idb.put(k, data); S.cached.add(k); return data;
+  } catch (e) { return null; }
+}
+
+/* ---------------- progress save / sync ---------------- */
+const dirty = new Set(LS.get('sz.dirty', []));
+let flushT, writing = Promise.resolve();
+function saveProg(id, p) {
+  /* opening a book or restoring a position is not reading: only save after the reader touches something */
+  if (S.cur && S.cur.id === id && S.userAct < (S.cur.openedAt || 0)) return;
+  /* same spot as last time: don't re-stamp it as "newer" (closing the book or switching apps on the phone
+     used to re-save an old position with a fresh time and overwrite what the iPad had read since) */
+  const l = localProg(id);
+  if (l && l.ch === p.ch && (l.para == null ? null : l.para) === (p.para == null ? null : p.para) && Math.abs((l.pf || 0) - (p.pf || 0)) < 0.02 && Math.abs((l.off || 0) - (p.off || 0)) < 0.01) return;
+  p.at = Date.now(); p.dev = DEV.id; p.devName = DEV.name;
+  LS.set('sz.p.' + id, p);
+  const b = S.books.get(id); if (!b || b.localOnly) return;
+  dirty.add(id); LS.set('sz.dirty', [...dirty]);
+  clearTimeout(flushT); flushT = setTimeout(flushRemote, 2500);
+}
+function flushRemote() {
+  clearTimeout(flushT);
+  if (!S.db || !navigator.onLine) return;
+  for (const id of [...dirty]) {
+    const p = localProg(id); const b = S.books.get(id);
+    if (!p || !b || b.localOnly) { dirty.delete(id); continue; }
+    writing = writing.then(() => S.db.doc(docPath(id)).update({ progress: p }))
+      .then(() => { const l = localProg(id); if (l && l.at === p.at) { dirty.delete(id); LS.set('sz.dirty', [...dirty]); } })
+      .catch(e => { if (e && e.code === 'invalid_argument') { dirty.delete(id); LS.set('sz.dirty', [...dirty]); } });
+  }
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') { if (S.cur) { S.cur.save(true); pushTime(S.cur.id); } flushRemote(); } });
+document.addEventListener('visibilitychange', () => {
+  const v = S.cur; if (!v) return;
+  dbg('visibility ' + document.visibilityState);
+  if (document.visibilityState === 'hidden') {
+    S.hideAnchor = v.anchor ? Object.assign({}, v.anchor) : null; S.hideProg = localProg(v.id);
+    return;
+  }
+  S.visibleAt = Date.now(); S.restoreUntil = S.visibleAt + 1500;
+  const fix = () => {
+    if (S.cur !== v || S.userAct > S.visibleAt) return;
+    if (v.apply && S.hideAnchor) { v.anchor = Object.assign({}, S.hideAnchor); v.apply('vis'); }
+    else if (v.kind === 'pdf' && S.hideProg) v.go(S.hideProg.ch, S.hideProg.off);
+  };
+  fix(); requestAnimationFrame(fix); [150, 500, 1200].forEach(ms => setTimeout(fix, ms));
+});
+
+/* ---------------- Supabase backend ---------------- */
+const IS_APP = (() => { try { return matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) { return false; } })();
+const CFG = (() => { const c = window.SZ_CONFIG || {}, l = LS.get('sz.cfg', {}); return { url: (c.url || l.url || '').trim().replace(/\/+$/, ''), key: (c.key || l.key || '').trim() }; })();
+let SB = null;
+function sbClient() {
+  if (!SB && CFG.url && CFG.key && window.supabase) {
+    try { SB = window.supabase.createClient(CFG.url, CFG.key, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storageKey: 'sz-auth' } }); } catch (e) { SB = null; }
+  }
+  return SB;
+}
+/* the reader was written against claude.ai's document store; this keeps the same shape on top of one Supabase table */
+function makeDb(uid) {
+  const cache = new Map(), ver = new Map(), subs = new Set();
+  let loaded = false, pulling = null;
+  const snapOf = () => { const docs = [...cache.entries()].map(([id, d]) => ({ id, exists: true, data: () => d })); return { docs, size: docs.length, empty: !docs.length, metadata: { fromCache: !loaded, hasPendingWrites: false } }; };
+  const emit = () => { const sn = snapOf(); subs.forEach(f => { try { f(sn); } catch (e) { console.error(e); } }); };
+  const fail = e => { const x = new Error((e && e.message) || '同步失败'); x.code = 'unavailable'; return x; };
+  async function pull() {
+    const { data: heads, error } = await SB.from('docs').select('id,updated_at');
+    if (error) throw error;
+    const seen = new Set(), need = [];
+    for (const h of heads) { seen.add(h.id); if (ver.get(h.id) !== h.updated_at || !cache.has(h.id)) need.push(h.id); }
+    let changed = false;
+    for (const id of [...cache.keys()]) if (!seen.has(id)) { cache.delete(id); ver.delete(id); changed = true; }
+    for (let i = 0; i < need.length; i += 50) {
+      const { data, error: e2 } = await SB.from('docs').select('id,data,updated_at').in('id', need.slice(i, i + 50));
+      if (e2) throw e2;
+      for (const r of data) { cache.set(r.id, r.data); ver.set(r.id, r.updated_at); changed = true; }
+    }
+    if (!loaded || changed) { loaded = true; emit(); }
+  }
+  const repull = () => pulling || (pulling = pull().catch(e => { dbg('pull failed ' + (e && e.message)); if (!loaded) setSync(navigator.onLine ? 'slow' : 'offline'); }).finally(() => { pulling = null; }));
+  const onRow = p => {
+    if (p.eventType === 'DELETE') { const o = p.old || {}; if (o.id && (!o.user_id || o.user_id === uid) && cache.has(o.id)) { cache.delete(o.id); ver.delete(o.id); emit(); } return; }
+    const n = p.new; if (!n || !n.id || n.user_id !== uid) return;
+    if (ver.get(n.id) === n.updated_at) return;
+    cache.set(n.id, n.data); ver.set(n.id, n.updated_at); emit();
+  };
+  function start() {
+    repull();
+    try {
+      SB.channel('docs-' + uid)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'docs', filter: 'user_id=eq.' + uid }, onRow)
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'docs', filter: 'user_id=eq.' + uid }, onRow)
+        .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'docs' }, onRow)
+        .subscribe(st => { dbg('realtime ' + st); if (st === 'SUBSCRIBED') repull(); });
+    } catch (e) {}
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') repull(); });
+    window.addEventListener('online', repull);
+    setInterval(() => { if (document.visibilityState === 'visible') repull(); }, 120000);
+  }
+  const keep = (id, row) => { cache.set(id, row.data); ver.set(id, row.updated_at); emit(); };
+  return {
+    start, all: () => [...cache.entries()].map(([id, data]) => ({ id, data })),
+    doc(path) {
+      const id = String(path).split('/').pop();
+      return {
+        id, path,
+        async get() { const { data, error } = await SB.from('docs').select('data').eq('id', id).maybeSingle(); if (error) throw fail(error); return { id, exists: !!data, data: () => data ? data.data : undefined, metadata: { fromCache: false, hasPendingWrites: false } }; },
+        async set(d) { const { data, error } = await SB.from('docs').upsert({ user_id: uid, id, data: d }).select('id,data,updated_at').single(); if (error) throw fail(error); keep(id, data); },
+        async update(patch) {
+          const { data, error } = await SB.rpc('merge_doc', { p_id: id, p_patch: patch }); if (error) throw fail(error);
+          const row = Array.isArray(data) ? data[0] : data;
+          if (!row || !row.id) { const x = new Error('这条资料已经不存在'); x.code = 'invalid_argument'; throw x; }
+          keep(id, row);
+        },
+        async delete() { const { error } = await SB.from('docs').delete().eq('id', id); if (error) throw fail(error); if (cache.delete(id)) { ver.delete(id); emit(); } }
+      };
+    },
+    collection() { return { onSnapshot(next, onErr) { subs.add(next); if (loaded) next(snapOf()); return () => subs.delete(next); } }; }
+  };
+}
+function makeAssets(uid) {
+  const B = () => SB.storage.from('books');
+  return {
+    async upload(blob, opt) {
+      const id = newId() + Math.random().toString(36).slice(2, 6);
+      const { error } = await B().upload(uid + '/' + id, blob, { contentType: (opt && opt.type) || blob.type || 'application/octet-stream', upsert: false });
+      if (error) { const x = new Error(error.message); x.code = /exceed|too large|maximum|size/i.test(error.message) ? 'too_large' : /quota|limit/i.test(error.message) ? 'quota_or_state' : 'upstream_error'; throw x; }
+      return { id, url: '' };
+    },
+    async delete(id) { await B().remove([uid + '/' + id]); return { deleted: true }; },
+    async list() {
+      const { data } = await B().list(uid, { limit: 1000 });
+      const bytes = (data || []).reduce((n, f) => n + ((f.metadata && f.metadata.size) || 0), 0);
+      return { assets: [], usage: { files: (data || []).length, bytes, maxFiles: 0, maxBytes: 1024 * 1024 * 1024 } };
+    }
+  };
+}
+async function blobFetch(id) {
+  if (!SB || !S.uid) return { ok: false };
+  const { data, error } = await SB.storage.from('books').download(S.uid + '/' + id);
+  if (error || !data) return { ok: false };
+  return new Response(data);
+}
+async function signOut() {
+  try { await SB.auth.signOut(); } catch (e) {}
+  ['sz.lib', 'sz.uid', 'sz.dirty', 'sz.groups', 'sz.recs', 'sz.recSeen'].forEach(k => LS.del(k));
+  try { Object.keys(localStorage).filter(k => /^sz\.(p|hl|t)\./.test(k)).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+  try { indexedDB.deleteDatabase('shuzhai'); } catch (e) {}
+  location.reload();
+}
+
+/* ---------------- login ---------------- */
+function showAuth(mode) {
+  const A = $('#auth'); A.hidden = false;
+  const setup = mode === 'setup';
+  $('#cfgFields').hidden = !setup; $('#loginFields').hidden = setup;
+  $('#authEmail').required = !setup; $('#authPass').required = !setup;
+  $('#authSub').textContent = setup ? '先填 Supabase 项目的网址和 key（在 Supabase 的 Project Settings → API 里）。只要填一次。' : '登入后，手机和 iPad 的书、进度和划线会自动同步。';
+  $('#authSwitch').hidden = setup;
+  let signUp = false;
+  const paint = () => { $('#authGo').textContent = setup ? '保存' : signUp ? '注册' : '登入'; $('#authSwitch').textContent = signUp ? '已经有账号？登入' : '第一次用？注册账号'; $('#authPass').autocomplete = signUp ? 'new-password' : 'current-password'; };
+  paint();
+  const msg = (t, ok) => { const m = $('#authMsg'); m.textContent = t || ''; m.classList.toggle('ok', !!ok); };
+  $('#authSwitch').onclick = () => { signUp = !signUp; msg(''); paint(); };
+  $('#authForm').onsubmit = async e => {
+    e.preventDefault();
+    if (setup) {
+      const url = $('#cfgUrl').value.trim(), key = $('#cfgKey').value.trim();
+      if (!/^https:\/\/.+\.supabase\.co\/?$/.test(url) || key.length < 20) { msg('网址要像 https://xxxx.supabase.co，key 是一长串字'); return; }
+      LS.set('sz.cfg', { url, key }); location.reload(); return;
+    }
+    const email = $('#authEmail').value.trim(), password = $('#authPass').value;
+    $('#authGo').disabled = true; msg(signUp ? '正在注册…' : '正在登入…', true);
+    try {
+      const r = signUp ? await SB.auth.signUp({ email, password }) : await SB.auth.signInWithPassword({ email, password });
+      if (r.error) throw r.error;
+      if (!r.data.session) { msg('注册好了。去电邮按确认链接，再回来这里登入。', true); signUp = false; paint(); return; }
+      startSync(r.data.session.user);
+    } catch (err) {
+      const t = String((err && err.message) || '');
+      msg(/Invalid login/i.test(t) ? '电邮或密码不对' : /not confirmed/i.test(t) ? '电邮还没确认，去邮箱按确认链接' : /already registered/i.test(t) ? '这个电邮注册过了，直接登入' : /Password should/i.test(t) ? '密码至少 6 个字' : /fetch|network/i.test(t) ? '连不上网络' : '没成功：' + t);
+    } finally { $('#authGo').disabled = false; }
+  };
+}
+
+/* ---------------- connect ---------------- */
+async function connect() {
+  S.remote = LS.get('sz.lib', []); rebuildBooks(); await refreshCached(); renderLibrary();
+  if (IS_APP) $('#rFsBtn').hidden = true;
+  if ('serviceWorker' in navigator && window.isSecureContext) { try { navigator.serviceWorker.register('sw.js'); } catch (e) {} }
+  if (!window.supabase) { setSync(LS.get('sz.uid', '') ? 'offline' : 'err'); window.addEventListener('online', () => location.reload(), { once: true }); return; }
+  if (!CFG.url || !CFG.key) { setSync('local'); showAuth('setup'); return; }
+  const sb = sbClient(); if (!sb) { setSync('err'); return; }
+  let session = null;
+  try { session = (await sb.auth.getSession()).data.session; } catch (e) {}
+  if (!session) {
+    if (LS.get('sz.uid', '') && !navigator.onLine) { setSync('offline'); window.addEventListener('online', () => location.reload(), { once: true }); return; }
+    setSync('local'); showAuth('login'); return;
+  }
+  startSync(session.user);
+}
+async function startSync(user) {
+  $('#auth').hidden = true;
+  const uid = user.id; S.email = user.email || '';
+  const prev = LS.get('sz.uid', '');
+  if (prev && prev !== uid) { ['sz.lib', 'sz.dirty', 'sz.groups'].forEach(k => LS.del(k)); S.remote = []; rebuildBooks(); renderLibrary(); }
+  LS.set('sz.uid', uid);
+  const db = makeDb(uid), assets = makeAssets(uid);
+  S.db = db; S.uid = uid; S.assets = assets;
+  const t = setTimeout(() => setSync(navigator.onLine ? 'slow' : 'offline'), 10000);
+  db.collection('data/users/' + uid).onSnapshot(snap => {
+    if (!snap.metadata.fromCache) { clearTimeout(t); setSync(navigator.onLine ? 'ok' : 'offline'); flushRemote(); setTimeout(backfillCovers, 2000); S.allDocs = Array.from(snap.docs).filter(d => d.exists).map(d => ({ id: d.id, data: JSON.parse(JSON.stringify(d.data())) })); }
+    if (snap.metadata.fromCache && snap.empty) return;
+    const rows = [];
+    for (const d of snap.docs) if (d.id.startsWith('book_') && d.exists) rows.push(Object.assign(JSON.parse(JSON.stringify(d.data())), { id: d.id.slice(5) }));
+    S.remote = rows; LS.set('sz.lib', rows); rebuildBooks();
+    const shd = Array.from(snap.docs).find(d => d.id === 'shelf' && d.exists);
+    if (shd) { const g = (shd.data() || {}).groups; if (Array.isArray(g)) { S.groups = g.filter(x => typeof x === 'string'); LS.set('sz.groups', S.groups); } }
+    const sd = Array.from(snap.docs).find(d => d.id === 'set_' + DEVKEY && d.exists);
+    if (sd) { const rs = JSON.parse(JSON.stringify(sd.data())); if ((rs.at || 0) > (SET.at || 0)) { SET = Object.assign({}, DEF, rs); LS.set('sz.set', SET); applySettings(); } }
+    else if (!snap.metadata.fromCache && SET.at) pushSettings();
+    const rhl = {};
+    for (const d of snap.docs) if (d.id.startsWith('hl_') && d.exists) rhl[d.id.slice(3)] = JSON.parse(JSON.stringify(d.data()));
+    let hlChanged = false;
+    for (const r of rows) {
+      const l = LS.get('sz.hl.' + r.id, null), rr = rhl[r.id];
+      if (rr && (!l || (rr.at || 0) >= (l.at || 0))) { if (!l || rr.at !== l.at) hlChanged = hlChanged || (S.cur && S.cur.id === r.id); S.hl[r.id] = rr; LS.set('sz.hl.' + r.id, rr); }
+      else if (l && (!rr || (l.at || 0) > (rr.at || 0)) && !snap.metadata.fromCache) { S.hl[r.id] = l; db.doc('data/users/' + uid + '/hl_' + r.id).set(l).catch(() => {}); }
+    }
+    if (hlChanged && S.cur && S.cur.refreshMarks) S.cur.refreshMarks();
+    if ($('#reader').hidden) renderLibrary(); else checkRemoteJump();
+  }, () => { clearTimeout(t); setSync('err'); });
+  db.start();
+  if (assets) {
+    try { const u = (await assets.list()).usage; if (u && u.maxBytes) $('#foot').textContent = '云端已用 ' + fmtSize(u.bytes) + '，上限 ' + fmtSize(u.maxBytes) + '。超过 15 MB 的书会自动分几部分上传。'; } catch (e) {}
+  }
+}
+
+/* ================= READER ================= */
+const R = $('#reader'), scroller = $('#scroller'), content = $('#content');
+var touching = false;
+var DBG = [];
+function dbg(m) {
+  const d = new Date(); const ts = d.toTimeString().slice(0, 8) + '.' + String(d.getMilliseconds()).padStart(3, '0');
+  let st = '';
+  try { const v = S.cur; st = ' | top=' + Math.round(scroller.scrollTop) + ' h=' + scroller.scrollHeight + ' H=' + scroller.clientHeight + (v && v.anchor ? ' a=' + v.anchor.ch + '/' + v.anchor.i + '/' + v.anchor.f.toFixed(2) : '') + (v ? ' ch=' + v.ch : ''); } catch (e) {}
+  DBG.push(ts + ' ' + m + st); if (DBG.length > 200) DBG.shift();
+}
+window.addEventListener('resize', () => {
+  dbg('resize ' + innerWidth + 'x' + innerHeight);
+  /* the iPad app switcher briefly resizes the page: the layout is temporary, so keep the paragraph anchor and re-apply it */
+  S.resizeAt = Date.now();
+  const fixR = () => { if (S.cur && S.cur.apply && S.cur.anchor) S.cur.apply('resize'); };
+  requestAnimationFrame(fixR); setTimeout(fixR, 400);
+});
+window.addEventListener('pageshow', e => dbg('pageshow persisted=' + e.persisted));
+window.addEventListener('pagehide', () => dbg('pagehide'));
+window.addEventListener('focus', () => dbg('focus'));
+window.addEventListener('blur', () => dbg('blur'));
+try { document.fonts.addEventListener('loadingdone', () => dbg('fonts loaded')); } catch (e) {}
+dbg('page loaded');
+scroller.addEventListener('touchstart', () => { touching = true; }, { passive: true });
+scroller.addEventListener('touchend', () => { touching = false; S.userAct = Date.now(); }, { passive: true });
+scroller.addEventListener('touchcancel', () => { touching = false; }, { passive: true });
+['pointerdown', 'touchstart', 'wheel'].forEach(t => R.addEventListener(t, () => { S.userAct = S.readAct = Date.now(); }, { passive: true, capture: true }));
+document.addEventListener('keydown', () => { if (!R.hidden) S.userAct = S.readAct = Date.now(); }, true);
+scroller.addEventListener('scroll', () => { if (touching) S.readAct = Date.now(); }, { passive: true });
+
+/* --- reading time: counted only while a book is open, on screen, and touched in the last 3 minutes.
+       Each device type keeps its own total (t_ipad, t_phone …) so devices never overwrite each other. --- */
+function myTime(b) { return Math.max(LS.get('sz.t.' + b.id + '.' + DEVKEY, 0), typeof b['t_' + DEVKEY] === 'number' ? b['t_' + DEVKEY] : 0); }
+function totalTime(b) { let t = 0; for (const k in b) if (k.startsWith('t_') && k !== 't_' + DEVKEY && typeof b[k] === 'number') t += b[k]; return t + myTime(b); }
+function fmtDur(sec) { const m = Math.floor(sec / 60); if (m < 1) return '不到 1 分钟'; if (m < 60) return m + ' 分钟'; const h = Math.floor(m / 60); return h + ' 小时' + (m % 60 ? ' ' + (m % 60) + ' 分钟' : ''); }
+function pushTime(id) {
+  const b = S.books.get(id); if (!b || b.localOnly || !S.db) return;
+  const val = myTime(b); if (val === b['t_' + DEVKEY]) return;
+  writing = writing.then(() => S.db.doc(docPath(id)).update({ ['t_' + DEVKEY]: val })).catch(() => {});
+}
+let tickN = 0;
+setInterval(() => {
+  const v = S.cur; if (!v || R.hidden || document.visibilityState !== 'visible' || Date.now() - (S.readAct || 0) > 180000) return;
+  const b = S.books.get(v.id); if (!b) return;
+  LS.set('sz.t.' + b.id + '.' + DEVKEY, myTime(b) + 15);
+  if (++tickN % 4 === 0) pushTime(b.id);
+}, 15000);
+const HL = {
+  get(id) { return S.hl[id] || LS.get('sz.hl.' + id, null) || { items: [], at: 0 }; },
+  set(id, items) {
+    const d = { items, at: Date.now() };
+    S.hl[id] = d; LS.set('sz.hl.' + id, d);
+    const b = S.books.get(id);
+    if (S.db && b && !b.localOnly) S.db.doc('data/users/' + S.uid + '/hl_' + id).set(d).catch(() => {});
+  }
+};
+const FONTS = {
+  sans: 'system-ui,-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif',
+  serif: '"Noto Serif SC","Songti SC",STSong,serif',
+  kai: '"LXGW WenKai TC","Kaiti SC",STKaiti,KaiTi,"Noto Serif SC",serif',
+  latin: 'Literata,"Noto Serif SC",Georgia,serif'
+};
+function applySettings() {
+  R.dataset.rt = SET.theme;
+  document.documentElement.dataset.theme = SET.theme === 'night' ? 'dark' : 'light';
+  const csMeta = document.querySelector('meta[name="color-scheme"]'); if (csMeta) csMeta.content = SET.theme === 'night' ? 'dark' : 'light dark';
+  R.style.setProperty('--fs', SET.size + 'px'); R.style.setProperty('--lh', SET.lh);
+  R.style.setProperty('--mg', SET.margin + 'px'); R.style.setProperty('--ff', FONTS[SET.font] || FONTS.serif);
+  R.classList.toggle('noindent', !SET.indent);
+  $('#fsVal').textContent = SET.size; $('#lhIn').value = SET.lh; $('#mgIn').value = SET.margin;
+  $('#indentIn').checked = SET.indent; $('#tapIn').checked = SET.tap; $('#autoFsIn').checked = SET.autoFs; $('#animIn').checked = SET.anim !== false;
+  document.querySelectorAll('#fontSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === SET.font));
+  document.querySelectorAll('#themeSw button').forEach(b => b.classList.toggle('on', b.dataset.v === SET.theme));
+}
+function changeSetting(k, v) {
+  const keep = null; /* text view re-anchors itself to the current paragraph */
+  SET[k] = v; SET.at = Date.now(); LS.set('sz.set', SET); applySettings(); pushSettings();
+  if (keep != null) requestAnimationFrame(() => setOffset(keep));
+}
+$('#fsDown').onclick = () => changeSetting('size', Math.max(13, SET.size - 1));
+$('#fsUp').onclick = () => changeSetting('size', Math.min(36, SET.size + 1));
+$('#lhIn').oninput = e => changeSetting('lh', +e.target.value);
+$('#mgIn').oninput = e => changeSetting('margin', +e.target.value);
+$('#indentIn').onchange = e => changeSetting('indent', e.target.checked);
+$('#autoFsIn').onchange = e => changeSetting('autoFs', e.target.checked);
+$('#animIn').onchange = e => changeSetting('anim', e.target.checked);
+/* animated page turn: eased scroll; quick repeated taps chain onto the pending target */
+const reduceMotion = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } };
+let scrollAnim = null;
+function smoothBy(dy) {
+  const max = scroller.scrollHeight - scroller.clientHeight;
+  const base = scrollAnim ? scrollAnim.to : scroller.scrollTop;
+  const to = Math.max(0, Math.min(max, base + dy));
+  if (scrollAnim) { cancelAnimationFrame(scrollAnim.raf); scrollAnim = null; }
+  if (SET.anim === false || reduceMotion()) { scroller.scrollTop = to; return; }
+  const from = scroller.scrollTop, t0 = performance.now(), dur = 320, st = { to };
+  const step = now => {
+    const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    S.userAct = S.readAct = Date.now();
+    scroller.scrollTop = from + (to - from) * e;
+    if (k < 1) st.raf = requestAnimationFrame(step); else if (scrollAnim === st) scrollAnim = null;
+  };
+  st.raf = requestAnimationFrame(step); scrollAnim = st;
+}
+scroller.addEventListener('touchstart', () => { if (scrollAnim) { cancelAnimationFrame(scrollAnim.raf); scrollAnim = null; } }, { passive: true });
+/* closing popups with an exit animation */
+function closeScrim(sc) { if (!sc || sc.classList.contains('out')) return; if (reduceMotion()) { sc.remove(); return; } sc.classList.add('out'); setTimeout(() => sc.remove(), 200); }
+function hideSheet(sh) { if (sh.hidden || sh.classList.contains('out')) return; if (reduceMotion()) { sh.hidden = true; return; } sh.classList.add('out'); setTimeout(() => { sh.hidden = true; sh.classList.remove('out'); }, 190); }
+function replay(node, cls) { node.classList.remove(cls); void node.offsetWidth; node.classList.add(cls); }
+$('#tapIn').onchange = e => changeSetting('tap', e.target.checked);
+$('#fontSeg').onclick = e => { const v = e.target.closest('button')?.dataset.v; if (v) changeSetting('font', v); };
+$('#themeSw').onclick = e => { const v = e.target.closest('button')?.dataset.v; if (v) changeSetting('theme', v); };
+applySettings();
+
+function curOffset() { const m = scroller.scrollHeight - scroller.clientHeight; return m > 0 ? scroller.scrollTop / m : 0; }
+function setOffset(off) { const m = scroller.scrollHeight - scroller.clientHeight; scroller.scrollTop = Math.round(Math.max(0, Math.min(1, off)) * m); }
+function chrome(on) { R.classList.toggle('chrome', on); }
+function closeSheets() { hideSheet($('#sheetToc')); hideSheet($('#sheetAa')); }
+document.querySelectorAll('[data-close]').forEach(b => b.onclick = closeSheets);
+
+function showMsg(text, btn) {
+  content.className = 'content'; content.textContent = '';
+  const d = el('div', 'loading'); text.split('\n').forEach((t, i) => { if (i) d.append(el('br')); d.append(t); });
+  if (btn) { const b = el('button', 'btn', btn.label); b.onclick = btn.fn; d.append(el('br'), b); }
+  content.append(d);
+}
+
+async function openBook(id) {
+  const b = S.books.get(id); if (!b) return;
+  if (SET.autoFs && !fsEl() && !IS_APP) enterFsQuiet();
+  closeSheets(); $('#rToast').hidden = true;
+  clearTimeout(S.leaveT); R.classList.remove('leaving');
+  R.hidden = false; document.body.style.overflow = 'hidden'; chrome(false);
+  if (!reduceMotion()) { replay(R, 'entering'); setTimeout(() => R.classList.remove('entering'), 400); }
+  $('#rTitle').textContent = b.title; $('#rMini').textContent = '';
+  showMsg('正在打开《' + b.title + '》…');
+  if (b.needFile) { showMsg('这本书的进度和划线已经在了，只差书本文件。\n选同一个文件上传，就能接着读。', { label: '选择文件', fn: () => { closeReader(); replaceBook(b); } }); return; }
+  const data = await ensureCached(b);
+  if (!data) { showMsg(b.asset ? '这本书还没存到这台设备，现在又连不上网。\n联网后打开一次，它就会存进本机，以后离线也能读。' : '找不到这本书的内容。', { label: '回书架', fn: closeReader }); return; }
+  if (S.cur) S.cur.destroy();
+  try {
+    S.cur = b.kind === 'pdf' ? await PdfView(b, data) : FlowView(b, data);
+  } catch (e) { showMsg('打不开这本书：' + (e.message || e), { label: '回书架', fn: closeReader }); return; }
+  S.cur.lastRemoteAt = 0; S.cur.openedAt = Date.now(); S.readAct = Date.now();
+  $('#sheetAa').querySelectorAll('.textonly').forEach(n => n.hidden = b.kind === 'pdf');
+  $('#sheetAa').querySelector('.pdfonly').hidden = b.kind !== 'pdf';
+  if (b.kind !== 'pdf' && SET.script && SET.script !== 'orig') { try { await ensureConv(); } catch (e) {} }
+  if (OCC && S.cur.sample) S.cur.script = detectScript(S.cur.sample());
+  const p = effProg(b);
+  S.cur.startAt = p ? p.at || 0 : 0;
+  S.cur.go(p ? p.ch : 0, p ? p.off : 0, p);
+  scLabel();
+}
+function closeReader() {
+  if (S.cur) { pushTime(S.cur.id); S.cur.save(true); S.cur.destroy(); S.cur = null; }
+  flushRemote();
+  if (fsEl()) { try { (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (e) {} }
+  const finish = () => { R.classList.remove('leaving'); R.hidden = true; document.body.style.overflow = ''; content.textContent = ''; };
+  if (reduceMotion()) finish(); else { R.classList.remove('entering'); R.classList.add('leaving'); S.leaveT = setTimeout(finish, 220); }
+  S.animGrid = true;
+  rebuildBooks(); refreshCached().then(renderLibrary);
+}
+$('#rBack').onclick = closeReader;
+
+/* --- simplified / traditional --- */
+let OCC = null;
+async function ensureConv() {
+  if (OCC) return OCC;
+  await loadScript(LIB.opencc);
+  OCC = { s2t: window.OpenCC.Converter({ from: 'cn', to: 'tw' }), t2s: window.OpenCC.Converter({ from: 'tw', to: 'cn' }) };
+  return OCC;
+}
+function convFn() { if (!OCC || !SET.script || SET.script === 'orig') return null; return SET.script === 'hant' ? OCC.s2t : OCC.t2s; }
+const cv = s => { const f = convFn(); return f && s ? f(s) : s; };
+function convNodes(root) { const f = convFn(); if (!f) return; const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); let nd; while ((nd = w.nextNode())) nd.nodeValue = f(nd.nodeValue); }
+function detectScript(sample) {
+  if (!OCC) return null;
+  const a = [...sample.slice(0, 4000)], b = [...OCC.t2s(sample.slice(0, 4000))];
+  let d = 0, t = 0;
+  for (let i = 0; i < a.length; i++) if (/[\u3400-\u9fff]/.test(a[i])) { t++; if (b[i] !== a[i]) d++; }
+  return t && d / t > 0.02 ? 'hant' : 'hans';
+}
+function scLabel() {
+  const v = S.cur, btn = $('#rScBtn');
+  if (!v || v.kind === 'pdf') { btn.hidden = true; return; }
+  btn.hidden = false;
+  const shown = SET.script && SET.script !== 'orig' ? SET.script : (v.script || 'hans');
+  btn.textContent = shown === 'hant' ? '简' : '繁';
+  btn.setAttribute('aria-label', shown === 'hant' ? '切换成简体' : '切换成繁体');
+}
+$('#rScBtn').onclick = async () => {
+  const v = S.cur; if (!v || v.kind === 'pdf') return;
+  if (!OCC) {
+    busy('正在准备简繁转换…');
+    try { await ensureConv(); busy(null); } catch (e) { busy('第一次用简繁转换需要联网下载组件，请连网后再试', 3500); return; }
+  }
+  if (!v.script) v.script = detectScript(v.sample());
+  const shown = SET.script && SET.script !== 'orig' ? SET.script : v.script;
+  const want = shown === 'hant' ? 'hans' : 'hant';
+  SET.script = want; LS.set('sz.set', SET);
+  v.rerender();
+  scLabel();
+};
+
+/* --- text / epub / docx view (continuous across chapters) --- */
+function FlowView(b, data) {
+  let chapters;
+  if (b.kind === 'text') chapters = splitText(data);
+  else { const j = JSON.parse(data); chapters = j.chapters || []; }
+  if (!chapters.length) throw new Error('没有内容');
+  const n = chapters.length;
+  const v = { kind: b.kind, id: b.id, book: b, n, ch: 0, anchor: null };
+  const slider = $('#rSlider'); slider.max = n - 1; slider.step = 1;
+  const SEL = 'p,div,h1,h2,h3,h4,h5,h6,li,pre,blockquote,figure';
+  const MAXW = 5;
+  let lo = 0, hi = -1;
+  const clamp01 = x => Math.max(0, Math.min(1, x));
+  const build = (i) => {
+    const c = chapters[i]; const s = el('section', 'chap'); s.dataset.ch = i;
+    if (b.kind === 'text') {
+      s.append(el('h2', 'ch-title', cv(c.t)));
+      const frag = document.createDocumentFragment();
+      for (const line of cv(c.body).split('\n')) { const t = line.replace(/^[\s\u3000]+|[\s\u3000]+$/g, ''); if (t) frag.append(el('p', '', t)); }
+      s.append(frag);
+    } else { const fr = htmlToSafeFragment(c.h); convNodes(fr); s.append(fr); }
+    if (i === n - 1) s.append(el('div', 'book-end', '全书完'));
+    markSection(s);
+    return s;
+  };
+  const blocksOf = s => { if (!s._bl) s._bl = [...s.querySelectorAll(SEL)].filter(x => !x.querySelector(SEL) && !x.classList.contains('book-end')); return s._bl; };
+  const secOf = i => content.querySelector('section[data-ch="' + i + '"]');
+  function markSection(s) {
+    s.querySelectorAll('mark.hl').forEach(m => m.replaceWith(document.createTextNode(m.textContent)));
+    s.normalize();
+    const ch = +s.dataset.ch; const items = HL.get(b.id).items.filter(h => h.ch === ch); if (!items.length) return;
+    const bl = blocksOf(s);
+    for (const h of items) {
+      const blk = bl[h.p]; if (!blk) continue;
+      const w = document.createTreeWalker(s, NodeFilter.SHOW_TEXT); w.currentNode = blk;
+      let skip = h.o || 0, left = h.len || 0, nd; const segs = [];
+      while (left > 0 && (nd = w.nextNode())) {
+        const L = nd.nodeValue.length;
+        if (skip >= L) { skip -= L; continue; }
+        const take = Math.min(L - skip, left); segs.push([nd, skip, take]); left -= take; skip = 0;
+      }
+      for (const [node, st, len] of segs) {
+        /* blank text between paragraphs (EPUB line breaks): count it, but never wrap it, or it renders as an empty highlighted line */
+        const seg = node.nodeValue.substr(st, len);
+        if (!seg.trim() && (/\n/.test(seg) || !bl.some(x => x.contains(node)))) continue;
+        let t = node; if (st > 0) t = t.splitText(st); if (len < t.nodeValue.length) t.splitText(len);
+        const m = document.createElement('mark'); m.className = 'hl' + (h.id === S.newHl ? ' fresh' : ''); m.dataset.hl = h.id; t.replaceWith(m); m.append(t);
+      }
+    }
+  }
+  v.refreshMarks = () => { for (const s of content.children) markSection(s); };
+  v.captureRange = (range) => {
+    const sc = range.startContainer, se = sc.nodeType === 1 ? sc : sc.parentElement;
+    const s = se && se.closest('section.chap'); if (!s || !content.contains(s)) return null;
+    const bl = blocksOf(s); const blk = bl.find(x => x.contains(sc)) || bl.find(x => range.intersectsNode(x)); if (!blk) return null;
+    const w = document.createTreeWalker(s, NodeFilter.SHOW_TEXT); w.currentNode = blk;
+    let o = 0, len = 0, started = false, nd;
+    while ((nd = w.nextNode())) {
+      const L = nd.nodeValue.length;
+      if (!range.intersectsNode(nd)) { if (started) break; o += L; continue; }
+      const st = nd === range.startContainer ? range.startOffset : 0, en = nd === range.endContainer ? range.endOffset : L;
+      if (!started) { started = true; o += st; }
+      len += Math.max(0, en - st);
+    }
+    const text = range.toString().replace(/\s+/g, ' ').trim().slice(0, 2000);
+    if (!len || !text) return null;
+    return { ch: +s.dataset.ch, p: bl.indexOf(blk), o, len, text };
+  };
+  v.chTitle = i => cv(chapters[i] ? chapters[i].t : '');
+  v.render = (i) => {
+    content.className = 'content' + (b.lang === 'en' ? ' en' : ''); content.lang = b.lang === 'en' ? 'en' : 'zh-CN';
+    content.textContent = ''; content.append(build(i)); lo = hi = i; v.ch = i;
+  };
+  /* paragraph anchor: survives font loading, font-size changes, rotation, chapter loading and phone↔iPad */
+  v.track = () => {
+    const ss = content.children; if (!ss.length) return;
+    const y = scroller.scrollTop; let s = ss[0];
+    for (const x of ss) { if (x.offsetTop <= y + 1) s = x; else break; }
+    const ch = +s.dataset.ch; v.ch = ch;
+    const bl = blocksOf(s);
+    if (!bl.length) { v.anchor = { ch, i: -1, f: clamp01((y - s.offsetTop) / Math.max(1, s.offsetHeight)) }; return; }
+    let a = 0, z = bl.length - 1;
+    while (a < z) { const m = (a + z) >> 1, e = bl[m]; if (e.offsetTop + e.offsetHeight <= y) a = m + 1; else z = m; }
+    const e = bl[a];
+    v.anchor = { ch, i: a, f: clamp01((y - e.offsetTop) / Math.max(1, e.offsetHeight)) };
+  };
+  v.apply = (why) => {
+    const a = v.anchor; if (!a) return; const s = secOf(a.ch); if (!s) return;
+    const setTop = y => { y = Math.round(y); const d = y - scroller.scrollTop; if (Math.abs(d) > 2) { if (Math.abs(d) > 40) dbg('setTop ' + (why || '?') + ' Δ' + Math.round(d)); scroller.scrollTop = y; } };
+    if (a.i < 0) { setTop(s.offsetTop + a.f * s.offsetHeight); return; }
+    const e = blocksOf(s)[a.i]; if (!e) return;
+    setTop(e.offsetTop + a.f * e.offsetHeight);
+  };
+  let extending = false;
+  let idleT;
+  v.scrolled = () => { clearTimeout(idleT); idleT = setTimeout(() => { if (S.cur !== v) return; if (touching || Date.now() - (S.resizeAt || 0) < 1000) v.scrolled(); else v.extend(true); }, 350); };
+  v.extend = (idle) => {
+    if (extending) return; extending = true;
+    try {
+      const H = scroller.clientHeight;
+      v.track();
+      let g = 0;
+      while (hi < n - 1 && scroller.scrollTop + H > scroller.scrollHeight - 2 * H && g++ < 3) content.append(build(++hi));
+      if (!idle) return;
+      g = 0;
+      /* never remove or insert text above the reader while iPad may still be coasting:
+         earlier chapters are only added when the reader is right at the top (or after a tap/jump) */
+      const lim = idle === 'tap' ? 1.5 * H : 40;
+      while (lo > 0 && scroller.scrollTop < lim && g++ < 2) { content.prepend(build(--lo)); dbg('prepend ' + lo); v.apply('prepend'); }
+      const cur = v.anchor ? v.anchor.ch : v.ch;
+      while (hi - cur > 3 && hi - lo + 1 > MAXW) { content.lastElementChild.remove(); hi--; }
+    } finally { extending = false; }
+  };
+  v.go = (i, off, anc) => {
+    i = Math.max(0, Math.min(n - 1, i | 0));
+    dbg('go ' + i + ' off=' + (off || 0) + (anc ? ' para=' + anc.para + ' pf=' + anc.pf : ''));
+    v.render(i); if (!reduceMotion()) replay(content, 'fadein');
+    if (i < n - 1) content.append(build(++hi));
+    if (i > 0) content.prepend(build(--lo));
+    if (anc && anc.ch === i && anc.para != null && anc.para >= 0) v.anchor = { ch: i, i: anc.para, f: anc.pf || 0 };
+    else v.anchor = { ch: i, i: -1, f: clamp01(off || 0) };
+    v.apply('go');
+    S.noHide = Date.now() + 1200;
+    requestAnimationFrame(() => { v.apply('go-raf'); v.extend('tap'); v.ui(); });
+    v.ui(); v.save();
+  };
+  v.rerender = () => {
+    v.track(); const a = v.anchor;
+    if (!a) return v.go(v.ch, 0);
+    v.go(a.ch, a.i < 0 ? a.f : 0, a.i >= 0 ? { ch: a.ch, para: a.i, pf: a.f } : null);
+  };
+  const ro = new ResizeObserver(() => { const w = content.clientWidth; if (w !== v.lastW) { if (v.lastW) S.resizeAt = Date.now(); v.lastW = w; } if (S.cur === v || !S.cur) v.apply('ro'); });
+  ro.observe(content);
+  const secFrac = () => { const s = secOf(v.ch); return s ? clamp01((scroller.scrollTop - s.offsetTop) / Math.max(1, s.offsetHeight - scroller.clientHeight * 0.5)) : 0; };
+  v.pct = () => Math.min(1, (v.ch + secFrac()) / n);
+  v.label = () => cv(chapters[v.ch].t);
+  v.sample = () => chapters.slice(0, 4).map(c => b.kind === 'text' ? c.body : c.h.replace(/<[^>]+>/g, '')).join('').slice(0, 4000);
+  v.ui = () => {
+    const pct = Math.round(v.pct() * 1000) / 10;
+    $('#rPos').textContent = v.label() + '　' + pct + '%';
+    $('#rMini').textContent = pct + '%';
+    slider.value = v.ch;
+    $('#rPrev').disabled = v.ch === 0; $('#rNext').disabled = v.ch === n - 1;
+  };
+  let t;
+  v.save = (now) => {
+    clearTimeout(t);
+    const doit = () => {
+      if (S.cur !== v && !now) return;
+      const a = v.anchor;
+      saveProg(b.id, { ch: v.ch, off: Math.round(secFrac() * 10000) / 10000, pct: Math.round(v.pct() * 10000) / 10000, label: v.label().slice(0, 40), para: a && a.i >= 0 ? a.i : null, pf: a && a.i >= 0 ? Math.round(a.f * 1000) / 1000 : 0 });
+    };
+    if (now) doit(); else t = setTimeout(doit, 700);
+  };
+  v.pageBy = dir => {
+    v.extend('tap');
+    const step = scroller.clientHeight - parseFloat(getComputedStyle(content).fontSize) * SET.lh * 1.6;
+    smoothBy(dir * step);
+  };
+  v.toc = () => chapters.map((c, i) => ({ t: cv(c.t), ch: i, lvl: 1 }));
+  v.destroy = () => { clearTimeout(t); ro.disconnect(); };
+  slider.oninput = () => { $('#rPos').textContent = cv(chapters[+slider.value].t); };
+  slider.onchange = () => v.go(+slider.value, 0);
+  return v;
+}
+
+/* --- PDF view --- */
+async function PdfView(b, data) {
+  const lib = await loadPdfJs();
+  const doc = await lib.getDocument({ data: new Uint8Array(data.slice(0)) }).promise;
+  const n = doc.numPages;
+  const p1 = await doc.getPage(1); const vp1 = p1.getViewport({ scale: 1 });
+  const aspect = vp1.height / vp1.width;
+  content.className = 'content pdfwrap'; content.style.maxWidth = 'none'; content.textContent = '';
+  const pages = [];
+  for (let i = 0; i < n; i++) {
+    const d = el('div', 'pdfpage'); d.style.aspectRatio = (1 / aspect).toFixed(5); d.dataset.i = i;
+    d.append(el('div', 'pn', String(i + 1))); content.append(d); pages.push(d);
+  }
+  const v = { kind: 'pdf', id: b.id, book: b, n, ch: 0 };
+  const rendered = [];
+  const render = async (i) => {
+    const d = pages[i]; if (d.querySelector('canvas') || d.dataset.busy) return;
+    d.dataset.busy = '1';
+    try {
+      const page = await doc.getPage(i + 1);
+      const w = d.clientWidth * Math.min(window.devicePixelRatio || 1, 2.5);
+      const vp = page.getViewport({ scale: w / page.getViewport({ scale: 1 }).width });
+      const c = document.createElement('canvas'); c.width = Math.floor(vp.width); c.height = Math.floor(vp.height);
+      await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+      d.append(c); rendered.push(i);
+      for (let k = 0; rendered.length > 12 && k < 40; k++) { const j = rendered.shift(); const cv = pages[j].querySelector('canvas'); if (cv && !visible.has(j)) { cv.width = 0; cv.remove(); } else if (cv) rendered.push(j); }
+    } catch (e) {} finally { delete d.dataset.busy; }
+  };
+  const visible = new Set();
+  const io = new IntersectionObserver(es => { for (const e of es) { const i = +e.target.dataset.i; if (e.isIntersecting) { visible.add(i); render(i); } else visible.delete(i); } }, { root: scroller, rootMargin: '150% 0px' });
+  pages.forEach(p => io.observe(p));
+  const pageH = () => pages[0].offsetHeight + 10;
+  const top0 = () => pages[0].offsetTop;
+  const pos = () => { const y = scroller.scrollTop - top0() + 1; const h = pageH(); const i = Math.max(0, Math.min(n - 1, Math.floor(y / h))); return { i, off: Math.max(0, Math.min(1, (y - i * h) / h)) }; };
+  const slider = $('#rSlider'); slider.max = n - 1; slider.step = 1;
+  v.go = (i, off) => { S.noHide = Date.now() + 1200; i = Math.max(0, Math.min(n - 1, i | 0)); scroller.scrollTop = top0() + (i + (off || 0)) * pageH(); v.ch = i; v.ui(); v.save(); };
+  v.pct = () => { const p = pos(); return Math.min(1, (p.i + p.off + (scroller.clientHeight / pageH()) * 0) / n); };
+  v.ui = () => { const p = pos(); v.ch = p.i; const pct = Math.round(((p.i + 1) / n) * 1000) / 10; $('#rPos').textContent = '第 ' + (p.i + 1) + ' / ' + n + ' 页　' + pct + '%'; $('#rMini').textContent = (p.i + 1) + ' / ' + n; slider.value = p.i; $('#rPrev').disabled = p.i === 0; $('#rNext').disabled = p.i === n - 1; };
+  let t;
+  v.save = (now) => { clearTimeout(t); const doit = () => { const p = pos(); saveProg(b.id, { ch: p.i, off: Math.round(p.off * 10000) / 10000, pct: Math.round(((p.i + 1) / n) * 10000) / 10000, label: '第 ' + (p.i + 1) + ' 页' }); }; if (now) doit(); else t = setTimeout(doit, 700); };
+  v.pageBy = dir => { smoothBy(dir * (scroller.clientHeight - 40)); };
+  v.label = () => '第 ' + (pos().i + 1) + ' 页';
+  let outline = null;
+  try {
+    const ol = await doc.getOutline();
+    if (ol && ol.length) {
+      outline = [];
+      const walk = async (items, lvl) => { for (const it of items) { try { const dest = typeof it.dest === 'string' ? await doc.getDestination(it.dest) : it.dest; if (dest && dest[0]) outline.push({ t: it.title, ch: await doc.getPageIndex(dest[0]), lvl }); } catch (e) {} if (lvl < 2 && it.items && it.items.length) await walk(it.items, lvl + 1); } };
+      await walk(ol, 1);
+      if (!outline.length) outline = null;
+    }
+  } catch (e) {}
+  v.toc = () => outline || pages.map((_, i) => ({ t: '第 ' + (i + 1) + ' 页', ch: i, lvl: 1 }));
+  v.destroy = () => { clearTimeout(t); io.disconnect(); try { doc.destroy(); } catch (e) {} content.style.maxWidth = ''; };
+  slider.oninput = () => { $('#rPos').textContent = '第 ' + (+slider.value + 1) + ' / ' + n + ' 页'; };
+  slider.onchange = () => v.go(+slider.value, 0);
+  return v;
+}
+
+/* --- reader interactions --- */
+let scrollRaf;
+scroller.addEventListener('scroll', () => {
+  if (!S.cur) return;
+  /* iPad can reset the scroll position while the app is in the background: ignore those scrolls */
+  if (document.hidden) return;
+  if (Date.now() < (S.restoreUntil || 0) && S.userAct < (S.visibleAt || 0)) return;
+  /* only a scroll the reader made can move the reading position; anything else (iPad resets, layout shifts) snaps back */
+  const nowT = Date.now();
+  const isUser = nowT - (S.resizeAt || 0) > 1000 && (touching || nowT - S.userAct < 6000 || nowT - (S.lastUserScroll || 0) < 600);
+  if (!isUser) { if (Math.abs(scroller.scrollTop - (S.lastTop || 0)) > 40) dbg('nonUser scroll'); if (S.cur.apply && S.cur.anchor) S.cur.apply('snap'); S.lastTop = scroller.scrollTop; return; }
+  S.lastUserScroll = nowT;
+  { const tp = scroller.scrollTop; if (S.lastTop != null && Math.abs(tp - S.lastTop) > scroller.clientHeight * 1.2) dbg('bigScroll Δ' + Math.round(tp - S.lastTop) + (touching ? ' touching' : '') + ' sinceAct=' + (nowT - S.userAct)); S.lastTop = tp; }
+  if (scrollRaf) return;
+  scrollRaf = requestAnimationFrame(() => { scrollRaf = null; if (!S.cur) return; if (Date.now() - (S.resizeAt || 0) < 1000) return; if (R.classList.contains('chrome') && $('#sheetToc').hidden && $('#sheetAa').hidden && Date.now() > S.noHide) chrome(false); if (S.cur.extend) { S.cur.extend(false); S.cur.scrolled(); } else if (S.cur.track) S.cur.track(); if (S.cur.ch !== S.lastCh) { dbg('ch→' + S.cur.ch); S.lastCh = S.cur.ch; } S.cur.ui(); S.cur.save(); });
+}, { passive: true });
+scroller.addEventListener('click', e => {
+  if (!S.cur || e.target.closest('button,a')) return;
+  if (!$('#sheetToc').hidden || !$('#sheetAa').hidden) { closeSheets(); return; }
+  const sel = window.getSelection && String(window.getSelection()); if (sel) return;
+  const mk = e.target.closest('mark.hl'); if (mk) { hlMenu(mk.dataset.hl); return; }
+  const x = e.clientX / window.innerWidth;
+  if (SET.tap && x < 0.3) { chrome(false); S.cur.pageBy(-1); }
+  else if (SET.tap && x > 0.7) { chrome(false); S.cur.pageBy(1); }
+  else chrome(!R.classList.contains('chrome'));
+});
+document.addEventListener('keydown', e => {
+  if (R.hidden || !S.cur || e.target.closest('input')) return;
+  if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); S.cur.pageBy(1); }
+  else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); S.cur.pageBy(-1); }
+  else if (e.key === 'Escape') { if (!$('#sheetToc').hidden || !$('#sheetAa').hidden) closeSheets(); else closeReader(); }
+});
+$('#rPrev').onclick = () => S.cur && S.cur.go(S.cur.ch - 1, 0);
+$('#rNext').onclick = () => S.cur && S.cur.go(S.cur.ch + 1, 0);
+$('#rAaBtn').onclick = () => { $('#sheetToc').hidden = true; $('#sheetAa').classList.remove('out'); $('#sheetAa').hidden = false; };
+let tocMode = 'toc';
+function fillToc() {
+  const v = S.cur; if (!v) return;
+  const list = $('#tocList'); list.textContent = '';
+  const isPdf = v.kind === 'pdf';
+  $('#tocSeg').hidden = isPdf; if (isPdf) tocMode = 'toc';
+  document.querySelectorAll('#tocSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === tocMode));
+  if (tocMode === 'hl') {
+    const items = HL.get(v.id).items.slice().sort((a, b) => a.ch - b.ch || a.p - b.p || a.o - b.o);
+    if (!items.length) { list.append(el('div', 'hl-empty', '还没有划线。长按选取一段文字，再按下面出现的「✎ 划线」就会保存，手机和 iPad 都看得到。')); return; }
+    for (const h of items) {
+      const row = el('div', 'hlitem');
+      const go = el('button', 'go'); go.append(el('span', '', h.text), el('small', '', v.chTitle ? v.chTitle(h.ch) : ''));
+      go.onclick = () => { closeSheets(); chrome(false); v.go(h.ch, 0, { ch: h.ch, para: h.p, pf: 0 }); };
+      const del = el('button', 'del', '✕'); del.setAttribute('aria-label', '删除划线');
+      del.onclick = () => { HL.set(v.id, HL.get(v.id).items.filter(x => x.id !== h.id)); if (v.refreshMarks) v.refreshMarks(); fillToc(); };
+      row.append(go, del); list.append(row);
+    }
+    return;
+  }
+  let curBtn = null; const items = v.toc();
+  let best = -1; items.forEach((it, i) => { if (it.ch <= v.ch) best = i; });
+  items.forEach((it, i) => {
+    const btn = el('button', (it.lvl > 1 ? 'l2' : '') + (i === best ? ' cur' : ''), it.t);
+    btn.onclick = () => { closeSheets(); chrome(false); v.go(it.ch, 0); };
+    if (i === best) curBtn = btn; list.append(btn);
+  });
+  if (curBtn) requestAnimationFrame(() => curBtn.scrollIntoView({ block: 'center' }));
+}
+$('#tocSeg').onclick = e => { const b = e.target.closest('button'); if (!b) return; tocMode = b.dataset.v; fillToc(); };
+$('#rTocBtn').onclick = () => {
+  if (!S.cur) return;
+  $('#sheetAa').hidden = true; $('#sheetToc').classList.remove('out'); $('#sheetToc').hidden = false; fillToc();
+};
+
+/* --- highlights: select text → ✎ 划线 --- */
+let hlRange = null, hlAt = 0;
+document.addEventListener('selectionchange', () => {
+  const pill = $('#hlPill');
+  if (R.hidden || !S.cur || !S.cur.captureRange) { pill.hidden = true; return; }
+  const sel = window.getSelection();
+  if (sel && sel.rangeCount && !sel.isCollapsed && content.contains(sel.anchorNode) && String(sel).trim()) {
+    hlRange = sel.getRangeAt(0).cloneRange(); hlAt = Date.now(); pill.hidden = false;
+  } else {
+    const t0 = hlAt; setTimeout(() => { if (hlAt === t0) { pill.hidden = true; hlRange = null; } }, 1500);
+  }
+});
+$('#hlPill').onclick = e => {
+  e.stopPropagation();
+  const v = S.cur, r = hlRange; $('#hlPill').hidden = true; hlRange = null; hlAt = Date.now();
+  if (!v || !r || !v.captureRange) return;
+  const c = v.captureRange(r); if (!c) { busy('这段文字没办法划线，换一段试试', 2500); return; }
+  const nid = newId(); S.newHl = nid; setTimeout(() => { if (S.newHl === nid) S.newHl = null; }, 900);
+  HL.set(v.id, HL.get(v.id).items.concat([Object.assign({ id: nid, at: Date.now() }, c)]));
+  try { window.getSelection().removeAllRanges(); } catch (err) {}
+  v.refreshMarks(); busy('已划线', 1500);
+};
+async function hlMenu(id) {
+  const v = S.cur; if (!v) return;
+  const h = HL.get(v.id).items.find(x => x.id === id); if (!h) return;
+  const act = await modal('划线', h.text.length > 120 ? h.text.slice(0, 120) + '…' : h.text, [{ label: '复制文字', v: 'copy' }, { label: '删除划线', v: 'del', cls: 'danger' }, { label: '取消', v: null }]);
+  if (act === 'copy') { try { await navigator.clipboard.writeText(h.text); busy('已复制', 1500); } catch (e) { busy('复制失败', 1500); } }
+  if (act === 'del') { HL.set(v.id, HL.get(v.id).items.filter(x => x.id !== id)); v.refreshMarks(); }
+}
+
+$('#dbgBtn').onclick = () => {
+  const scrim = el('div', 'scrim'); const m = el('div', 'modal');
+  m.append(el('h3', '', '调试记录'), el('p', '', '出现跳位置后马上打开这里，按「复制」贴给 Claude。'));
+  const ta = el('textarea'); ta.readOnly = true; ta.value = 'dev=' + DEV.name + ' ua=' + navigator.userAgent + '\n' + DBG.join('\n');
+  ta.style.cssText = 'width:100%;height:45vh;font:11px/1.4 ui-monospace,Menlo,monospace;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--bg);color:var(--ink)';
+  const cp = el('button', 'btn primary', '复制'); cp.onclick = async () => { try { await navigator.clipboard.writeText(ta.value); cp.textContent = '已复制'; } catch (e) { ta.focus(); ta.select(); cp.textContent = '请长按文字框手动复制'; } };
+  const x = el('button', 'btn', '关闭'); x.onclick = () => closeScrim(scrim);
+  m.append(ta, cp, x); scrim.append(m); scrim.onclick = e => { if (e.target === scrim) closeScrim(scrim); };
+  document.body.append(scrim);
+};
+
+/* --- another device moved ahead --- */
+function checkRemoteJump() {
+  const v = S.cur; if (!v) return;
+  const b = S.books.get(v.id); if (!b || !b.progress) return;
+  const r = b.progress;
+  if (r.dev === DEV.id || (r.at || 0) <= Math.max(v.startAt || 0, v.lastRemoteAt || 0)) return;
+  v.lastRemoteAt = r.at;
+  if (S.userAct < (v.openedAt || 0)) { dbg('remote auto-jump from ' + (r.devName || '?')); v.go(r.ch, r.off, r); return; }
+  const l = localProg(v.id);
+  if (l && r.ch === l.ch && Math.abs((r.off || 0) - (l.off || 0)) < 0.02) return;
+  const toast = $('#rToast'); toast.textContent = '';
+  const msg = el('span', 'tmsg');
+  msg.append(el('small', '', (r.devName || '另一台设备') + ' 上读到了'), el('b', '', (r.label || '更后面') + '　' + Math.round((r.pct || 0) * 100) + '%'));
+  toast.append(msg);
+  const go = el('button', '', '跳过去'); go.onclick = () => { toast.hidden = true; v.go(r.ch, r.off, r); };
+  const x = el('button', 'x', '✕'); x.setAttribute('aria-label', '关闭'); x.onclick = () => { toast.hidden = true; };
+  toast.append(go, x); toast.hidden = false;
+}
+
+/* --- fullscreen reading mode --- */
+function fsEl() { return document.fullscreenElement || document.webkitFullscreenElement; }
+var quietFs = false;
+function enterFsQuiet() {
+  const r = document.documentElement, req = r.requestFullscreen || r.webkitRequestFullscreen;
+  if (!req) return;
+  quietFs = true; setTimeout(() => { quietFs = false; }, 1500);
+  try { const p = req.call(r, { navigationUI: 'hide' }); if (p && p.catch) p.catch(() => {}); } catch (e) {}
+}
+function fsHelp() {
+  const toast = $('#rToast'); toast.textContent = '';
+  toast.append(el('span', '', '这里不允许网页全屏（iPhone 和部分 app 内浏览器有这个限制）。阅读时上下工具栏会自动隐藏，只剩正文。'));
+  const x = el('button', 'x', '✕'); x.setAttribute('aria-label', '关闭'); x.onclick = () => { toast.hidden = true; };
+  toast.append(x); toast.hidden = false;
+  setTimeout(() => { toast.hidden = true; }, 6000);
+}
+function syncFsLabel() { $('#rFsBtn').textContent = fsEl() ? '退出全屏' : '全屏'; if (fsEl()) chrome(false); }
+document.addEventListener('fullscreenchange', syncFsLabel);
+document.addEventListener('webkitfullscreenchange', syncFsLabel);
+document.addEventListener('fullscreenerror', () => { if (!quietFs) fsHelp(); });
+document.addEventListener('webkitfullscreenerror', () => { if (!quietFs) fsHelp(); });
+$('#rFsBtn').onclick = async () => {
+  if (fsEl()) { try { await (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (e) {} return; }
+  const r = document.documentElement;
+  const req = r.requestFullscreen || r.webkitRequestFullscreen;
+  if (!req || (document.fullscreenEnabled === false && !document.webkitFullscreenEnabled)) { fsHelp(); return; }
+  try { await req.call(r, { navigationUI: 'hide' }); } catch (e) { fsHelp(); return; }
+  chrome(false);
+  setTimeout(() => { if (!fsEl()) fsHelp(); }, 700);
+};
+
+window.__SZ = { S, HL, closeReader: () => closeReader() };   /* handle for the debug log and tests */
+connect();
+})();
+</script>
+</body>
+</html>
