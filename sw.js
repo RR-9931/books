@@ -1,7 +1,7 @@
 /* 书斋 service worker: lets the app open with no network.
    The page itself is fetched fresh when online; libraries and fonts are kept once downloaded.
    Bump VERSION when this file's lists change. */
-const VERSION = 'sz-v1';
+const VERSION = 'sz-v2';
 const SHELL = ['./', './index.html', './config.js', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 const LIBS = [
   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.50.5/dist/umd/supabase.js',

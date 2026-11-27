@@ -295,6 +295,49 @@ mark.hl.fresh{animation:hlIn .7s ease both}
 .rbtn:active,.toc button:active{opacity:.55}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 @media (prefers-reduced-motion: reduce){.rbar{transition:none}}
+/* 划线笔记 / 全部划线 / 查词 */
+mark.hl.hn{text-decoration:underline dotted rgba(180,130,10,.9);text-decoration-thickness:2px;text-underline-offset:4px}
+.hlpill{display:flex;gap:2px;padding:4px!important;white-space:nowrap}
+.hlpill button{border:0;background:none;color:inherit;font:inherit;font-weight:600;padding:9px 14px;border-radius:999px;cursor:pointer}
+.hlpill button+button{border-left:1px solid rgba(255,255,255,.25);border-radius:0 999px 999px 0}
+.hlpill button:active{background:rgba(255,255,255,.18)}
+.toc .hlitem .go em{display:block;font-style:normal;font-size:13px;color:var(--rink);margin:6px 0 0 12px;padding:6px 9px;border-radius:8px;background:rgba(250,204,21,.14)}
+.nq{border-left:3px solid rgba(250,204,21,.85);padding-left:10px;color:var(--ink)!important}
+.nta{width:100%;min-height:120px;box-sizing:border-box;font:inherit;font-size:16px;line-height:1.6;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;resize:vertical}
+.hlpage{position:fixed;inset:0;z-index:60;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;animation:riseIn .3s var(--ease) both}
+.hlpage.out{animation:fadeOut .22s var(--ease-in) both}
+.hpwrap{max-width:820px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top,0px)) clamp(14px,4vw,32px) calc(40px + env(safe-area-inset-bottom,0px))}
+.hphead{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.hphead h2{flex:1;margin:0;font-family:var(--serif);font-size:28px;letter-spacing:.04em}
+.hpsum{color:var(--muted);font-size:14px;margin:0 0 14px}
+.hpsearch{width:100%;box-sizing:border-box;font:inherit;font-size:16px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:11px 18px;margin-bottom:16px}
+.hpg{background:var(--surface);border:1px solid var(--line);border-radius:18px;margin-bottom:14px;overflow:hidden;box-shadow:var(--shadow);animation:riseIn .4s var(--ease) both;animation-delay:var(--d,0ms)}
+.hpg summary{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;list-style:none}
+.hpg summary::-webkit-details-marker{display:none}
+.hpg summary::after{content:"›";font-size:22px;color:var(--muted);transition:transform .25s var(--ease)}
+.hpg[open] summary::after{transform:rotate(90deg)}
+.hpsw{flex:none;width:38px;height:50px;border-radius:5px 8px 8px 5px;display:grid;place-items:center;color:#fff;font-family:var(--serif);font-weight:700;font-size:18px;box-shadow:inset 3px 0 0 rgba(0,0,0,.18)}
+.hpt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.hpt b{font-family:var(--serif);font-size:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hpt small{color:var(--muted);font-size:12px}
+.hpex{flex:none;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:13px}
+.hpi{padding:12px 16px 12px;border-top:1px solid var(--line)}
+.hpi blockquote{margin:0;border-left:3px solid rgba(250,204,21,.9);padding:2px 0 2px 12px;font-family:var(--serif);font-size:16px;line-height:1.75;color:var(--ink);white-space:pre-wrap}
+.hpn{margin:8px 0 0 15px;padding:8px 11px;border-radius:10px;background:rgba(250,204,21,.16);font-size:14px;line-height:1.6;color:var(--ink);white-space:pre-wrap}
+.hpn::before{content:"📝 "}
+.hpm{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0 0 15px;font-size:12px;color:var(--muted)}
+.hpa{display:flex;gap:4px;flex:none}
+.hpa button{border:0;background:none;color:var(--accent);font-size:13px;font-weight:600;padding:4px 6px}
+.dict .dhd{display:flex;align-items:center;gap:10px}.dict .dhd h3{flex:1;font-family:Georgia,serif;font-size:24px}
+.dsp{border:0;background:var(--bg);border-radius:50%;width:40px;height:40px;font-size:18px}
+.dbody{max-height:52vh;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.dph{color:var(--muted);font-family:Georgia,serif;font-size:15px;margin-top:-6px}
+.dzh{font-size:20px;font-weight:700;color:var(--accent)}
+.dsec{border-top:1px solid var(--line);padding-top:8px}
+.dpos{display:inline-block;font-size:12px;font-style:italic;color:var(--accent-ink);background:var(--accent);border-radius:6px;padding:1px 7px;margin-bottom:4px}
+.ddef{font-size:14px;line-height:1.55;color:var(--ink)}
+.dex{font-size:13px;color:var(--muted);font-style:italic;margin:2px 0 4px 14px}
+@media (prefers-reduced-motion:reduce){.hlpage,.hpg{animation:none!important}}
 </style>
 </head>
 <body>
@@ -327,6 +370,7 @@ mark.hl.fresh{animation:hlIn .7s ease both}
     </div>
     <div class="head-actions">
       <button class="btn" id="recBtn" hidden>✨ 荐书</button>
+      <button class="btn" id="hlBtn">✎ 划线</button>
       <button class="btn icon" id="libMore" aria-label="更多">⋯</button>
       <button class="btn primary" id="addBtn">添加书籍</button>
     </div>
@@ -401,9 +445,18 @@ mark.hl.fresh{animation:hlIn .7s ease both}
       <button class="rbtn" id="dbgBtn" style="align-self:flex-start;color:var(--rmuted);font-size:13px;padding:4px 0">调试记录</button>
     </div>
   </section>
-  <button class="hlpill" id="hlPill" hidden>✎ 划线</button>
+  <div class="hlpill" id="hlPill" hidden><button data-pa="hl">✎ 划线</button><button data-pa="note">📝 笔记</button><button data-pa="dict" hidden>🔍 查词</button></div>
   <div class="toast" id="rToast" hidden></div>
 </div>
+
+<section class="hlpage" id="hlPage" hidden aria-label="我的划线">
+  <div class="hpwrap">
+    <div class="hphead"><button class="btn" id="hpBack">‹ 书架</button><h2>我的划线</h2><button class="btn primary" id="hpExport">导出全部</button></div>
+    <p class="hpsum" id="hpSum"></p>
+    <input class="hpsearch" id="hpSearch" type="search" placeholder="🔍 搜划线和笔记" autocomplete="off">
+    <div id="hpList"></div>
+  </div>
+</section>
 
 <div class="busy" id="busy" hidden></div>
 
@@ -1781,7 +1834,7 @@ function FlowView(b, data) {
         const seg = node.nodeValue.substr(st, len);
         if (!seg.trim() && (/\n/.test(seg) || !bl.some(x => x.contains(node)))) continue;
         let t = node; if (st > 0) t = t.splitText(st); if (len < t.nodeValue.length) t.splitText(len);
-        const m = document.createElement('mark'); m.className = 'hl' + (h.id === S.newHl ? ' fresh' : ''); m.dataset.hl = h.id; t.replaceWith(m); m.append(t);
+        const m = document.createElement('mark'); m.className = 'hl' + (h.note ? ' hn' : '') + (h.id === S.newHl ? ' fresh' : ''); m.dataset.hl = h.id; t.replaceWith(m); m.append(t);
       }
     }
   }
@@ -2007,11 +2060,12 @@ function fillToc() {
     if (!items.length) { list.append(el('div', 'hl-empty', '还没有划线。长按选取一段文字，再按下面出现的「✎ 划线」就会保存，手机和 iPad 都看得到。')); return; }
     for (const h of items) {
       const row = el('div', 'hlitem');
-      const go = el('button', 'go'); go.append(el('span', '', h.text), el('small', '', v.chTitle ? v.chTitle(h.ch) : ''));
+      const go = el('button', 'go'); go.append(el('span', '', h.text)); if (h.note) go.append(el('em', '', '📝 ' + h.note)); go.append(el('small', '', v.chTitle ? v.chTitle(h.ch) : ''));
       go.onclick = () => { closeSheets(); chrome(false); v.go(h.ch, 0, { ch: h.ch, para: h.p, pf: 0 }); };
+      const nb = el('button', 'del', '📝'); nb.setAttribute('aria-label', '笔记'); nb.onclick = async () => { const n = await noteEdit(h.text, h.note || ''); if (n != null) { hlUpdate(v.id, h.id, { note: n || undefined }); v.refreshMarks(); fillToc(); } };
       const del = el('button', 'del', '✕'); del.setAttribute('aria-label', '删除划线');
       del.onclick = () => { HL.set(v.id, HL.get(v.id).items.filter(x => x.id !== h.id)); if (v.refreshMarks) v.refreshMarks(); fillToc(); };
-      row.append(go, del); list.append(row);
+      row.append(go, nb, del); list.append(row);
     }
     return;
   }
@@ -2042,24 +2096,6 @@ document.addEventListener('selectionchange', () => {
     const t0 = hlAt; setTimeout(() => { if (hlAt === t0) { pill.hidden = true; hlRange = null; } }, 1500);
   }
 });
-$('#hlPill').onclick = e => {
-  e.stopPropagation();
-  const v = S.cur, r = hlRange; $('#hlPill').hidden = true; hlRange = null; hlAt = Date.now();
-  if (!v || !r || !v.captureRange) return;
-  const c = v.captureRange(r); if (!c) { busy('这段文字没办法划线，换一段试试', 2500); return; }
-  const nid = newId(); S.newHl = nid; setTimeout(() => { if (S.newHl === nid) S.newHl = null; }, 900);
-  HL.set(v.id, HL.get(v.id).items.concat([Object.assign({ id: nid, at: Date.now() }, c)]));
-  try { window.getSelection().removeAllRanges(); } catch (err) {}
-  v.refreshMarks(); busy('已划线', 1500);
-};
-async function hlMenu(id) {
-  const v = S.cur; if (!v) return;
-  const h = HL.get(v.id).items.find(x => x.id === id); if (!h) return;
-  const act = await modal('划线', h.text.length > 120 ? h.text.slice(0, 120) + '…' : h.text, [{ label: '复制文字', v: 'copy' }, { label: '删除划线', v: 'del', cls: 'danger' }, { label: '取消', v: null }]);
-  if (act === 'copy') { try { await navigator.clipboard.writeText(h.text); busy('已复制', 1500); } catch (e) { busy('复制失败', 1500); } }
-  if (act === 'del') { HL.set(v.id, HL.get(v.id).items.filter(x => x.id !== id)); v.refreshMarks(); }
-}
-
 $('#dbgBtn').onclick = () => {
   const scrim = el('div', 'scrim'); const m = el('div', 'modal');
   m.append(el('h3', '', '调试记录'), el('p', '', '出现跳位置后马上打开这里，按「复制」贴给 Claude。'));
@@ -2120,6 +2156,206 @@ $('#rFsBtn').onclick = async () => {
   chrome(false);
   setTimeout(() => { if (!fsEl()) fsHelp(); }, 700);
 };
+
+
+/* ---------------- 划线笔记 · 全部划线页 · 英文查词 ---------------- */
+function hlUpdate(bookId, id, patch) {
+  HL.set(bookId, HL.get(bookId).items.map(x => x.id === id ? Object.assign({}, x, patch) : x));
+}
+function fmtDay(t) { if (!t) return ''; const d = new Date(t); return d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate(); }
+function noteEdit(quote, cur) {
+  return new Promise(res => {
+    const scrim = el('div', 'scrim'); const m = el('div', 'modal'); m.setAttribute('role', 'dialog');
+    m.append(el('h3', '', cur ? '改笔记' : '写笔记'));
+    const q = el('p', 'nq', quote.length > 160 ? quote.slice(0, 160) + '…' : quote); m.append(q);
+    const ta = el('textarea', 'nta'); ta.value = cur || ''; ta.placeholder = '你的想法…'; ta.maxLength = 2000; m.append(ta);
+    const done = v => { closeScrim(scrim); res(v); };
+    const ok = el('button', 'btn primary', '保存'); ok.onclick = () => done(ta.value.trim());
+    const no = el('button', 'btn', '取消'); no.onclick = () => done(null);
+    m.append(ok);
+    if (cur) { const del = el('button', 'btn danger', '删除笔记（保留划线）'); del.onclick = () => done(''); m.append(del); }
+    m.append(no);
+    scrim.onclick = e => { if (e.target === scrim) done(null); };
+    scrim.append(m); document.body.append(scrim); setTimeout(() => ta.focus(), 60);
+  });
+}
+
+/* pill: 划线 / 笔记 / 查词 */
+const EN_RE = /^[A-Za-z][A-Za-z'’\-]*( [A-Za-z][A-Za-z'’\-]*){0,5}$/;
+let hlText = '';
+document.addEventListener('selectionchange', () => {
+  const sel = window.getSelection(); const t = sel && !sel.isCollapsed ? String(sel).trim() : '';
+  if (t) hlText = t;
+  const d = $('#hlPill [data-pa="dict"]'); if (d && t) d.hidden = !EN_RE.test(t.replace(/[.,;:!?"“”()]+$/g, '').replace(/^[("“]+/, ''));
+});
+async function doHl(withNote, preNote) {
+  const v = S.cur, r = hlRange; $('#hlPill').hidden = true; hlRange = null; hlAt = Date.now();
+  if (!v || !r || !v.captureRange) return null;
+  const c = v.captureRange(r); if (!c) { busy('这段文字没办法划线，换一段试试', 2500); return null; }
+  try { window.getSelection().removeAllRanges(); } catch (err) {}
+  let note = preNote || '';
+  if (withNote) { const n = await noteEdit(c.text, ''); if (n == null) return null; note = n; }
+  const nid = newId(); S.newHl = nid; setTimeout(() => { if (S.newHl === nid) S.newHl = null; }, 900);
+  const h = Object.assign({ id: nid, at: Date.now(), chT: v.chTitle ? v.chTitle(c.ch) : '' }, c); if (note) h.note = note;
+  HL.set(v.id, HL.get(v.id).items.concat([h]));
+  v.refreshMarks(); busy(note ? '已划线 + 笔记' : '已划线', 1500);
+  return h;
+}
+$('#hlPill').onclick = async e => {
+  e.stopPropagation(); const b = e.target.closest('[data-pa]'); if (!b) return;
+  if (b.dataset.pa === 'hl') doHl(false);
+  else if (b.dataset.pa === 'note') doHl(true);
+  else if (b.dataset.pa === 'dict') { const w = hlText.replace(/[.,;:!?"“”()]+$/g, '').replace(/^[("“]+/, '').replace(/’/g, "'"); dictShow(w); }
+};
+async function hlMenu(id) {
+  const v = S.cur; if (!v) return;
+  const h = HL.get(v.id).items.find(x => x.id === id); if (!h) return;
+  const txt = (h.text.length > 120 ? h.text.slice(0, 120) + '…' : h.text) + (h.note ? '\n\n📝 ' + h.note : '');
+  const act = await modal('划线', txt, [{ label: h.note ? '📝 改笔记' : '📝 写笔记', v: 'note' }, { label: '复制文字', v: 'copy' }, { label: '删除划线', v: 'del', cls: 'danger' }, { label: '取消', v: null }]);
+  if (act === 'note') { const n = await noteEdit(h.text, h.note || ''); if (n != null) { hlUpdate(v.id, id, { note: n || undefined }); v.refreshMarks(); busy(n ? '笔记已保存' : '笔记已删除', 1500); } }
+  if (act === 'copy') { try { await navigator.clipboard.writeText(h.text + (h.note ? '\n\n笔记：' + h.note : '')); busy('已复制', 1500); } catch (e) { busy('复制失败', 1500); } }
+  if (act === 'del') { HL.set(v.id, HL.get(v.id).items.filter(x => x.id !== id)); v.refreshMarks(); }
+}
+
+/* 英文查词：Free Dictionary API（英文解释）+ MyMemory（中文意思） */
+async function dictFetch(w) {
+  const key = w.toLowerCase(), cache = LS.get('sz.dict', {});
+  if (cache[key]) return cache[key];
+  const get = async (u, ms) => { const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), ms || 7000); try { const r = await fetch(u, { signal: ctl.signal }); return r.ok ? await r.json() : null; } catch (e) { return null; } finally { clearTimeout(t); } };
+  const single = !/ /.test(w);
+  const [en, zh] = await Promise.all([
+    single ? get('https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(key)) : null,
+    get('https://api.mymemory.translated.net/get?langpair=en|zh-CN&q=' + encodeURIComponent(w))
+  ]);
+  const out = { w, ph: '', zh: '', defs: [] };
+  if (Array.isArray(en)) {
+    out.ph = (en.find(x => x.phonetic) || {}).phonetic || ((en[0].phonetics || []).find(p => p.text) || {}).text || '';
+    const seen = new Set();
+    for (const e of en) for (const m of e.meanings || []) {
+      if (seen.has(m.partOfSpeech) || seen.size >= 3) continue; seen.add(m.partOfSpeech);
+      out.defs.push({ pos: m.partOfSpeech, d: (m.definitions || []).slice(0, 2).map(x => ({ d: x.definition, ex: x.example || '' })) });
+    }
+  }
+  const tr = zh && zh.responseData && zh.responseData.translatedText;
+  if (tr && !/MYMEMORY WARNING|INVALID|QUERY LENGTH/i.test(tr) && tr.toLowerCase() !== key) out.zh = tr;
+  if (out.zh || out.defs.length) { cache[key] = out; const ks = Object.keys(cache); if (ks.length > 400) delete cache[ks[0]]; LS.set('sz.dict', cache); }
+  return out;
+}
+async function dictShow(w) {
+  if (!w) return;
+  const keepRange = hlRange;
+  const scrim = el('div', 'scrim'); const m = el('div', 'modal dict'); m.setAttribute('role', 'dialog');
+  const hd = el('div', 'dhd'); hd.append(el('h3', '', w));
+  const sp = el('button', 'dsp', '🔊'); sp.setAttribute('aria-label', '读出来');
+  sp.onclick = () => { try { const u = new SpeechSynthesisUtterance(w); u.lang = 'en-US'; u.rate = 0.9; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) {} };
+  hd.append(sp); m.append(hd);
+  const body = el('div', 'dbody'); body.append(el('p', '', '查询中…')); m.append(body);
+  const close = () => closeScrim(scrim);
+  scrim.onclick = e => { if (e.target === scrim) close(); };
+  scrim.append(m); document.body.append(scrim);
+  if (!navigator.onLine && !LS.get('sz.dict', {})[w.toLowerCase()]) { body.textContent = ''; body.append(el('p', '', '没有网络，查不了 🙃 连上网再试。')); m.append(Object.assign(el('button', 'btn', '关闭'), { onclick: close })); return; }
+  const r = await dictFetch(w);
+  body.textContent = '';
+  if (r.ph) body.append(el('div', 'dph', r.ph));
+  if (r.zh) body.append(el('div', 'dzh', r.zh));
+  for (const g of r.defs) {
+    const sec = el('div', 'dsec'); sec.append(el('b', 'dpos', g.pos));
+    g.d.forEach((x, i) => { const p = el('div', 'ddef', (g.d.length > 1 ? (i + 1) + '. ' : '') + x.d); sec.append(p); if (x.ex) sec.append(el('div', 'dex', '“' + x.ex + '”')); });
+    body.append(sec);
+  }
+  if (!r.zh && !r.defs.length) body.append(el('p', '', '查不到这个词，可能是人名、地名或者拼法比较特别。'));
+  if (keepRange && S.cur && S.cur.captureRange && (r.zh || r.defs.length)) {
+    const save = el('button', 'btn primary', '✎ 划线，把意思存成笔记');
+    save.onclick = async () => {
+      close(); hlRange = keepRange;
+      const n = [w + (r.ph ? ' ' + r.ph : ''), r.zh, r.defs[0] ? r.defs[0].pos + ' ' + r.defs[0].d[0].d : ''].filter(Boolean).join('\n');
+      await doHl(false, n);
+    };
+    m.append(save);
+  }
+  const x = el('button', 'btn', '关闭'); x.onclick = close; m.append(x);
+}
+
+/* 全部划线页 */
+const HP = $('#hlPage'); let hpQ = '';
+function allHl() {
+  const out = [];
+  for (const b of S.books.values()) {
+    const items = HL.get(b.id).items || []; if (!items.length) continue;
+    out.push({ b, items: items.slice().sort((x, y) => x.ch - y.ch || x.p - y.p || x.o - y.o), last: Math.max(...items.map(i => i.at || 0)) });
+  }
+  return out.sort((x, y) => y.last - x.last);
+}
+function renderHlPage() {
+  const list = $('#hpList'); list.textContent = '';
+  const groups = allHl(), q = hpQ.trim().toLowerCase();
+  const total = groups.reduce((s, g) => s + g.items.length, 0), notes = groups.reduce((s, g) => s + g.items.filter(i => i.note).length, 0);
+  $('#hpSum').textContent = total ? groups.length + ' 本书 · ' + total + ' 条划线 · ' + notes + ' 条笔记' : '';
+  if (!total) { list.append(el('div', 'empty', '还没有划线。看书时长按选一段字，按「✎ 划线」或「📝 笔记」，就会出现在这里。')); return; }
+  let shown = 0;
+  groups.forEach((g, gi) => {
+    const items = q ? g.items.filter(h => (h.text + ' ' + (h.note || '')).toLowerCase().includes(q)) : g.items;
+    if (!items.length) return; shown += items.length;
+    const det = el('details', 'hpg'); det.open = !!q || gi < 3; det.style.setProperty('--d', Math.min(gi, 8) * 40 + 'ms');
+    const sm = el('summary'); const sw = el('span', 'hpsw', [...g.b.title][0] || '书'); sw.style.background = colorFor(g.b.title);
+    const tt = el('span', 'hpt'); tt.append(el('b', '', '《' + g.b.title + '》'), el('small', '', items.length + ' 条' + (items.filter(i => i.note).length ? ' · ' + items.filter(i => i.note).length + ' 条笔记' : '') + ' · 最近 ' + fmtDay(g.last)));
+    const ex = el('button', 'hpex', '导出'); ex.onclick = e => { e.preventDefault(); e.stopPropagation(); exportHl([g]); };
+    sm.append(sw, tt, ex); det.append(sm);
+    for (const h of items) {
+      const it = el('div', 'hpi');
+      it.append(el('blockquote', '', h.text));
+      if (h.note) it.append(el('div', 'hpn', h.note));
+      const meta = el('div', 'hpm'); meta.append(el('span', '', [h.chT, fmtDay(h.at)].filter(Boolean).join(' · ')));
+      const acts = el('span', 'hpa');
+      const go = el('button', '', '去看 ›'); go.onclick = () => hpGo(g.b.id, h);
+      const nb = el('button', '', h.note ? '改笔记' : '写笔记'); nb.onclick = async () => { const n = await noteEdit(h.text, h.note || ''); if (n != null) { hlUpdate(g.b.id, h.id, { note: n || undefined }); renderHlPage(); } };
+      const cp = el('button', '', '复制'); cp.onclick = async () => { try { await navigator.clipboard.writeText(h.text + (h.note ? '\n\n笔记：' + h.note : '') + '\n——《' + g.b.title + '》'); busy('已复制', 1400); } catch (e) { busy('复制失败', 1400); } };
+      acts.append(nb, cp, go); meta.append(acts); it.append(meta); det.append(it);
+    }
+    list.append(det);
+  });
+  if (!shown) list.append(el('div', 'empty', '找不到「' + hpQ + '」'));
+}
+async function hpGo(id, h) {
+  closeHlPage(true); await openBook(id);
+  const v = S.cur; if (v && v.id === id && v.kind !== 'pdf') setTimeout(() => v.go(h.ch, 0, { ch: h.ch, para: h.p, pf: 0 }), 50);
+}
+function openHlPage() { hpQ = ''; $('#hpSearch').value = ''; renderHlPage(); HP.hidden = false; HP.classList.remove('out'); document.body.style.overflow = 'hidden'; HP.scrollTop = 0; }
+function closeHlPage(quick) {
+  if (HP.hidden) return; document.body.style.overflow = '';
+  if (quick || reduceMotion()) { HP.hidden = true; return; }
+  HP.classList.add('out'); setTimeout(() => { HP.hidden = true; HP.classList.remove('out'); }, 220);
+}
+function hlMarkdown(groups) {
+  const lines = ['# 我的划线', '', '导出日期：' + todayStr(), ''];
+  for (const g of groups) {
+    lines.push('## 《' + g.b.title + '》', '');
+    let lastCh = null;
+    for (const h of g.items) {
+      if (h.chT && h.chT !== lastCh) { lines.push('### ' + h.chT, ''); lastCh = h.chT; }
+      lines.push('> ' + h.text.replace(/\n/g, '\n> '), '');
+      if (h.note) lines.push('**笔记：** ' + h.note, '');
+      lines.push('<sub>' + fmtDay(h.at) + '</sub>', '');
+    }
+  }
+  return lines.join('\n');
+}
+async function exportHl(groups) {
+  groups = groups || allHl(); if (!groups.length) { busy('还没有划线', 1500); return; }
+  const md = hlMarkdown(groups), name = (groups.length === 1 ? '划线-' + groups[0].b.title : '书斋划线') + '-' + todayStr() + '.md';
+  const v = await modal('导出划线', groups.length === 1 ? '《' + groups[0].b.title + '》' + groups[0].items.length + ' 条' : groups.length + ' 本书', [{ label: '📄 存成 Markdown 文件', v: 'file' }, { label: '📋 复制全部文字', v: 'copy' }, { label: '取消', v: null }]);
+  if (v === 'copy') { try { await navigator.clipboard.writeText(md); busy('已复制，可以贴到 Notion / 备忘录', 2200); } catch (e) { busy('复制失败', 1500); } return; }
+  if (v !== 'file') return;
+  const file = new File([md], name.replace(/[\\/:*?"<>|]/g, '_'), { type: 'text/markdown' });
+  try { if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: name }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+  const u = URL.createObjectURL(file); const a = document.createElement('a'); a.href = u; a.download = file.name; document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(u), 4000); busy('已导出', 1800);
+}
+$('#hlBtn').onclick = openHlPage;
+$('#hpBack').onclick = () => closeHlPage();
+$('#hpExport').onclick = () => exportHl();
+$('#hpSearch').addEventListener('input', e => { hpQ = e.target.value; renderHlPage(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !HP.hidden && !document.querySelector('.scrim')) closeHlPage(); });
 
 window.__SZ = { S, HL, closeReader: () => closeReader() };   /* handle for the debug log and tests */
 connect();
